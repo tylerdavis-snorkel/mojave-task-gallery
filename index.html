@@ -890,6 +890,26 @@
         flex: 0 0 auto;
       }
 
+      .claim-intent-modal {
+        width: min(620px, 100%);
+      }
+
+      .claim-intent-copy {
+        margin: 0 0 18px;
+        color: var(--muted-strong);
+        font-size: 17px;
+        line-height: 1.55;
+      }
+
+      .claim-intent-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 26px;
+        padding-top: 22px;
+        border-top: 1px solid var(--border);
+      }
+
       .metrics-table {
         width: 100%;
         margin-top: 16px;
@@ -1157,6 +1177,7 @@
 
         <div class="tab-bar">
           <button class="tab-button active" id="tabButtonBrowse" onclick="switchTab('browse')">Browse Tasks</button>
+          <button class="tab-button" id="tabButtonClaimLog" onclick="switchTab('claimlog')" style="display: none;">Claim Log</button>
           <button class="tab-button" id="tabButtonAdmin" onclick="switchTab('admin')" style="display: none;">Admin Tools</button>
         </div>
 
@@ -1195,6 +1216,8 @@
 
           <div id="taskList">Loading tasks...</div>
         </div>
+
+        <div id="claimLogTab" style="display: none;"></div>
 
         <div class="panel" id="adminTab" style="display: none;"></div>
       </div>
@@ -1256,6 +1279,7 @@
 
       let TASKS = [];
       let CLAIMS = [];
+      let CLAIM_EVENTS = [];
       let currentUser = null;
 
       const LOCAL_DB = {
@@ -1332,6 +1356,7 @@
           }
 ],
         mojave_claims: [],
+        mojave_claim_events: [],
         gallery_visits: []
       };
 
@@ -1617,6 +1642,18 @@
 
         CLAIMS = claimsData || [];
 
+        if (isAdmin()) {
+          const { data: eventData, error: eventError } = await supabaseClient
+            .from("mojave_claim_events")
+            .select("id, idea_display_id, idea_title, user_email, event, intent")
+            .order("id", { ascending: false });
+
+          if (eventError) console.error(eventError);
+          CLAIM_EVENTS = eventData || [];
+        } else {
+          CLAIM_EVENTS = [];
+        }
+
         TASKS = (tasksData || [])
           .map((task) => {
           const activeClaim = getCurrentClaimForTask(task.id);
@@ -1636,6 +1673,7 @@
             active_claim_admin_email: activeClaim?.admin_email || "",
             active_claim_owned_by_me: ownedByCurrentUser,
             active_claim_submission_id: activeClaim?.snorkel_submission_id || "",
+            active_claim_intent: activeClaim?.claim_intent || "",
             active_claim_selected_at: activeClaim?.selected_at || "",
             active_claim_expires_at: activeClaim?.expires_at || "",
             active_claim_submitted_at: activeClaim?.submitted_for_review_at || "",
@@ -1684,6 +1722,33 @@
           task.active_claim_owned_by_me &&
           ["Submitted", "Approved", "Ungradeable"].includes(task.status)
         );
+      }
+
+      // What someone tells us when they claim. Recorded so we can see who was
+      // unsure — not used to gate anything.
+      const CLAIM_INTENTS = [
+        { value: "will_use",  label: "I'm going to use this idea", short: "Going to use it",     style: "primary-button" },
+        { value: "might_use", label: "I might use it",             short: "Might use it",        style: "neutral-button" },
+        { value: "browsing",  label: "Just checking it out",       short: "Just checking it out", style: "neutral-button" }
+      ];
+
+      function intentLabel(value) {
+        const intent = CLAIM_INTENTS.find(item => item.value === value);
+        return intent ? intent.short : "";
+      }
+
+      async function logClaimEvent(task, event, intent) {
+        const { error } = await supabaseClient
+          .from("mojave_claim_events")
+          .insert({
+            idea_display_id: task.task_id,
+            idea_title: task.idea_title,
+            user_email: currentUser?.email || null,
+            event: event,
+            intent: intent || null
+          });
+
+        if (error) console.error(error);
       }
 
       // Shown on every idea. Deliberately not per-row data — it applies to all of them.
@@ -2198,8 +2263,10 @@
       function switchTab(tab) {
         currentTab = tab;
         document.getElementById("browseTab").style.display = tab === "browse" ? "" : "none";
+        document.getElementById("claimLogTab").style.display = tab === "claimlog" ? "block" : "none";
         document.getElementById("adminTab").style.display = tab === "admin" ? "block" : "none";
         document.getElementById("tabButtonBrowse").classList.toggle("active", tab === "browse");
+        document.getElementById("tabButtonClaimLog").classList.toggle("active", tab === "claimlog");
         document.getElementById("tabButtonAdmin").classList.toggle("active", tab === "admin");
       }
 
@@ -2274,22 +2341,86 @@
         `;
       }
 
+      const CLAIM_EVENT_LABELS = {
+        claimed: "Claimed",
+        released: "Released",
+        submitted: "Submitted"
+      };
+
+      const CLAIM_EVENT_PILLS = {
+        claimed: "Claimed",
+        released: "Blocked",
+        submitted: "Submitted"
+      };
+
+      function renderClaimLog() {
+        const panel = document.getElementById("claimLogTab");
+        if (!panel) return;
+
+        if (!isAdmin()) {
+          panel.innerHTML = "";
+          return;
+        }
+
+        const events = CLAIM_EVENTS;
+
+        panel.innerHTML = `
+          <div class="panel">
+            <div class="section-heading">
+              <h2>Claim Log</h2>
+              <span class="count-bubble">${events.length}</span>
+            </div>
+
+            <p class="muted">Newest first. "Intent" is what the contributor selected when they claimed the idea.</p>
+
+            ${events.length ? `
+              <table class="metrics-table">
+                <thead>
+                  <tr>
+                    <th>Contributor</th>
+                    <th>Idea</th>
+                    <th>Event</th>
+                    <th>Intent</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${events.map(item => `
+                    <tr>
+                      <td>${escapeHtml(item.user_email || "unknown")}</td>
+                      <td class="domain-cell">${escapeHtml(item.idea_title || "")}<div class="muted" style="font-weight:400;">${escapeHtml(item.idea_display_id || "")}</div></td>
+                      <td><span class="pill ${escapeHtml(CLAIM_EVENT_PILLS[item.event] || "")}">${escapeHtml(CLAIM_EVENT_LABELS[item.event] || item.event)}</span></td>
+                      <td>${escapeHtml(intentLabel(item.intent))}</td>
+                    </tr>
+                  `).join("")}
+                </tbody>
+              </table>
+            ` : `<div class="empty">Nothing claimed yet.</div>`}
+          </div>
+        `;
+      }
+
       function renderAdminPanel() {
         const tabButton = document.getElementById("tabButtonAdmin");
         const panel = document.getElementById("adminTab");
 
+        const claimLogButton = document.getElementById("tabButtonClaimLog");
+
         if (!isAdmin()) {
           tabButton.style.display = "none";
+          claimLogButton.style.display = "none";
           panel.innerHTML = "";
+          document.getElementById("claimLogTab").innerHTML = "";
           adminEditMode = false;
           adminSelected.clear();
-          if (currentTab === "admin") {
+          if (currentTab === "admin" || currentTab === "claimlog") {
             switchTab("browse");
           }
           return;
         }
 
         tabButton.style.display = "inline-block";
+        claimLogButton.style.display = "inline-block";
+        renderClaimLog();
 
         if (currentTab === "admin") {
           panel.style.display = "block";
@@ -2740,7 +2871,8 @@
         document.body.appendChild(modal);
       }
 
-      async function claimTask(taskId) {
+      // Clicking "Claim idea" asks what they intend before anything is written.
+      function claimTask(taskId) {
         clearMessage();
         clearError();
 
@@ -2748,6 +2880,78 @@
 
         if (!task) {
           showError("Could not find task #" + taskId);
+          return;
+        }
+
+        if (!currentUser) {
+          signInWithGitHub();
+          return;
+        }
+
+        if (getMyActiveClaim()) {
+          showError("You already have an active claim. Submit or release it before claiming another idea.");
+          return;
+        }
+
+        if (effectiveStatus(task) !== "Available") {
+          showError("This idea is not available.");
+          return;
+        }
+
+        openClaimIntentModal(task);
+      }
+
+      function openClaimIntentModal(task) {
+        const modal = document.createElement("div");
+        modal.className = "modal-backdrop";
+
+        // Closing without choosing claims nothing and records nothing.
+        modal.onclick = function (event) {
+          if (event.target === modal) modal.remove();
+        };
+
+        modal.innerHTML = `
+          <div class="modal claim-intent-modal">
+            <button class="modal-close" onclick="this.closest('.modal-backdrop').remove()">×</button>
+
+            <h2>Before you claim this idea</h2>
+
+            <p class="claim-intent-copy">
+              Claiming holds this idea for ${CLAIM_TTL_HOURS} hours, so no one else can work on it while
+              it's yours. Please claim it only if you expect to build a submission from it - if you're
+              unsure, that's fine, but let us know. You can also release a claim at any time.
+            </p>
+
+            <p class="muted">${escapeHtml(task.idea_title)}</p>
+
+            <div class="claim-intent-actions">
+              ${CLAIM_INTENTS.map(intent => `
+                <button class="${intent.style}" onclick="confirmClaim('${escapeAttr(String(task.task_id))}', '${escapeAttr(intent.value)}')">
+                  ${escapeHtml(intent.label)}
+                </button>
+              `).join("")}
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(modal);
+      }
+
+      async function confirmClaim(taskId, intent) {
+        const modal = document.querySelector(".modal-backdrop");
+        if (modal) modal.remove();
+
+        await finishClaim(taskId, intent);
+      }
+
+      async function finishClaim(taskId, intent) {
+        clearMessage();
+        clearError();
+
+        const task = TASKS.find(t => String(t.task_id) === String(taskId));
+
+        if (!task) {
+          showError("Could not find idea " + taskId);
           return;
         }
 
@@ -2788,6 +2992,7 @@
             user_id: currentUser.id,
             user_email: currentUser.email || null,
             status: "claimed",
+            claim_intent: intent,
             selected_at: now.toISOString(),
             expires_at: expiresAt.toISOString()
           });
@@ -2798,7 +3003,9 @@
           return;
         }
 
-        showMessage("Task claimed.");
+        await logClaimEvent(task, "claimed", intent);
+
+        showMessage("Idea claimed.");
         await loadTasks();
       }
 
@@ -2833,6 +3040,8 @@
           showError("Could not release your claim.");
           return;
         }
+
+        await logClaimEvent(claim, "released", claim.active_claim_intent);
 
         showMessage("Claim released.");
         await loadTasks();
@@ -2892,7 +3101,9 @@
           return;
         }
 
-        showMessage("Task submitted for review.");
+        await logClaimEvent(claim, "submitted", claim.active_claim_intent);
+
+        showMessage("Idea submitted for review.");
         await loadTasks();
       }
 
