@@ -1,0 +1,3353 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mojave Task Idea Gallery</title>
+
+    <style>
+      :root {
+        color-scheme: light;
+        --bg: #f5f3ef;
+        --card: #ffffff;
+        --text: #111c2d;
+        --muted: rgba(14, 23, 37, 0.698);
+        --muted-strong: rgba(14, 23, 37, 0.78);
+        --border: rgba(14, 23, 37, 0.118);
+        --soft: #efede9;
+        --blue: #1c398e;
+        --blue-dark: #16306f;
+        --on-blue: #ffffff;
+        --blue-shadow: rgba(28, 57, 142, 0.22);
+        --green-soft: #e3f7ed;
+        --green-ink: #16855d;
+        --yellow-soft: #fff0c7;
+        --amber-ink: #9a6800;
+        --purple-soft: rgba(28, 57, 142, 0.12);
+        --violet-ink: #1c398e;
+        --red-soft: #ffe4e7;
+        --red-ink: #b3313c;
+        --orange-soft: #fff0c7;
+        --pill-ink: rgba(14, 23, 37, 0.78);
+        --line-soft: rgba(14, 23, 37, 0.08);
+        --hover-border: rgba(14, 23, 37, 0.2);
+        --btn-hover: #e6e2db;
+        --placeholder: rgba(14, 23, 37, 0.45);
+        --empty-bg: rgba(255, 255, 255, 0.7);
+        --pre-bg: #f1efeb;
+        --overlay: rgba(17, 28, 45, 0.78);
+        --notice-bg: #111c2d;
+        --notice-ink: #ffffff;
+        --notice-muted: rgba(255, 255, 255, 0.6);
+        --notice-accent: #ffd6a0;
+        --shadow-sm: 0 18px 45px rgba(14, 23, 37, 0.06);
+        --shadow: 0 18px 45px rgba(14, 23, 37, 0.08);
+        --shadow-md: 0 18px 45px rgba(14, 23, 37, 0.12);
+        --shadow-lg: 0 18px 50px rgba(14, 23, 37, 0.35);
+        --shadow-xl: 0 30px 90px rgba(14, 23, 37, 0.35);
+      }
+
+      body[data-theme="dark"] {
+        color-scheme: dark;
+        --bg: #07111f;
+        --card: rgba(15, 27, 45, 0.88);
+        --text: #f4f7ff;
+        --muted: #a9b4ca;
+        --muted-strong: #c3ccdd;
+        --border: rgba(132, 153, 190, 0.18);
+        --soft: rgba(28, 42, 68, 0.72);
+        --blue: #2f6fed;
+        --blue-dark: #6fa1ff;
+        --on-blue: #07111f;
+        --blue-shadow: rgba(45, 108, 223, 0.28);
+        --green-soft: rgba(20, 137, 87, 0.24);
+        --green-ink: #4ad48b;
+        --yellow-soft: rgba(247, 183, 51, 0.18);
+        --amber-ink: #f7b733;
+        --purple-soft: rgba(111, 161, 255, 0.18);
+        --violet-ink: #6fa1ff;
+        --red-soft: rgba(243, 107, 114, 0.18);
+        --red-ink: #f36b72;
+        --orange-soft: rgba(247, 183, 51, 0.18);
+        --pill-ink: #d4dcec;
+        --line-soft: rgba(132, 153, 190, 0.16);
+        --hover-border: rgba(161, 177, 209, 0.28);
+        --btn-hover: rgba(40, 58, 90, 0.85);
+        --placeholder: rgba(169, 180, 202, 0.7);
+        --empty-bg: rgba(15, 27, 45, 0.6);
+        --pre-bg: rgba(28, 42, 68, 0.72);
+        --overlay: rgba(3, 8, 16, 0.82);
+        --notice-bg: rgba(21, 34, 56, 0.96);
+        --notice-ink: #f4f7ff;
+        --notice-muted: rgba(244, 247, 255, 0.6);
+        --notice-accent: #f7b733;
+        --shadow-sm: 0 26px 70px rgba(0, 0, 0, 0.28);
+        --shadow: 0 26px 70px rgba(0, 0, 0, 0.35);
+        --shadow-md: 0 26px 70px rgba(0, 0, 0, 0.45);
+        --shadow-lg: 0 26px 70px rgba(0, 0, 0, 0.5);
+        --shadow-xl: 0 30px 90px rgba(0, 0, 0, 0.6);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        color: var(--text);
+        background: var(--bg);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      }
+
+      header {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 42px 28px 18px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: clamp(34px, 4vw, 48px);
+        line-height: 1.08;
+        letter-spacing: -0.035em;
+        font-weight: 700;
+      }
+
+      .subtitle {
+        margin-top: 14px;
+        max-width: 720px;
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.45;
+      }
+
+      main {
+        max-width: 1180px;
+        margin: 0 auto;
+        padding: 16px 28px 64px;
+      }
+
+      .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+
+      .identity {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .panel-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 18px;
+        margin: 22px 0 28px;
+      }
+
+      .panel {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 20px;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .panel h2 {
+        margin: 0 0 10px;
+        font-size: 20px;
+        letter-spacing: -0.025em;
+      }
+
+      .panel p {
+        margin: 0 0 14px;
+        color: var(--muted);
+        line-height: 1.45;
+      }
+
+      .panel-actions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 14px;
+      }
+
+      .message {
+        display: none;
+        margin: 16px 0;
+        border-radius: 14px;
+        padding: 14px 16px;
+        background: var(--green-soft);
+        color: var(--green-ink);
+        font-weight: 700;
+      }
+
+      .error {
+        display: none;
+        margin: 16px 0;
+        border-radius: 14px;
+        padding: 14px 16px;
+        background: var(--red-soft);
+        color: var(--red-ink);
+        font-weight: 700;
+        white-space: pre-wrap;
+      }
+
+      .search-shell {
+        margin: 24px auto 40px;
+        max-width: 860px;
+        display: grid;
+        grid-template-columns: 1fr 190px 190px;
+        gap: 0;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 999px;
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: visible;
+      }
+
+      .search-part,
+      .filter-part {
+        padding: 16px 22px;
+      }
+
+      .filter-part {
+        position: relative;
+      }
+
+      .filter-part + .filter-part {
+        border-left: 1px solid var(--border);
+      }
+
+      .filter-trigger {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        width: 100%;
+        padding: 0;
+        border: 0;
+        appearance: none;
+        -webkit-appearance: none;
+        background: transparent;
+        color: var(--text);
+        font: inherit;
+        font-size: 18px;
+        line-height: 1.4;
+        cursor: pointer;
+        text-align: left;
+      }
+
+      .filter-trigger:focus-visible {
+        outline: 2px solid var(--blue);
+        outline-offset: 4px;
+        border-radius: 6px;
+      }
+
+      .filter-trigger .value {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .filter-trigger .chev {
+        flex: 0 0 auto;
+        color: var(--muted);
+        font-size: 11px;
+        transition: transform 140ms ease;
+      }
+
+      .filter-part.is-open .filter-trigger .chev {
+        transform: rotate(180deg);
+      }
+
+      .filter-menu {
+        position: absolute;
+        z-index: 200;
+        top: calc(100% + 10px);
+        left: 0;
+        width: max(100%, 280px);
+        padding: 6px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        box-shadow: var(--shadow-xl);
+      }
+
+      .filter-part:last-child .filter-menu {
+        left: auto;
+        right: 0;
+      }
+
+      .filter-menu[hidden] {
+        display: none;
+      }
+
+      .filter-menu-list {
+        max-height: 296px;
+        overflow-y: auto;
+        padding: 2px;
+      }
+
+      .filter-option {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        width: 100%;
+        padding: 9px 10px;
+        border: 0;
+        border-radius: 10px;
+        background: transparent;
+        color: var(--text);
+        font: inherit;
+        font-size: 15px;
+        font-weight: 600;
+        text-align: left;
+        cursor: pointer;
+      }
+
+      .filter-option:hover {
+        background: var(--soft);
+      }
+
+      .filter-option .box {
+        flex: 0 0 auto;
+        display: grid;
+        place-items: center;
+        width: 18px;
+        height: 18px;
+        border: 1.5px solid var(--line-strong, var(--border));
+        border-radius: 6px;
+        color: transparent;
+        font-size: 12px;
+        font-weight: 800;
+      }
+
+      .filter-option.is-on .box {
+        background: var(--blue);
+        border-color: var(--blue);
+        color: var(--on-blue);
+      }
+
+      .filter-option .text {
+        overflow: hidden;
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .filter-menu-footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        margin-top: 4px;
+        padding: 8px 8px 4px;
+        border-top: 1px solid var(--line-soft);
+      }
+
+      .filter-menu-footer button {
+        padding: 6px 8px;
+        border: 0;
+        border-radius: 8px;
+        background: transparent;
+        color: var(--muted);
+        font: inherit;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .filter-menu-footer button:hover {
+        color: var(--text);
+        background: var(--soft);
+      }
+
+      .active-filters {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        align-items: center;
+        margin: -18px 0 22px;
+      }
+
+      .filter-chip {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: 999px;
+        padding: 6px 10px;
+        background: var(--soft);
+        border: 1px solid var(--border);
+        color: var(--text);
+        font-size: 12px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .filter-chip:hover {
+        background: var(--btn-hover);
+      }
+
+      .filter-chip .x {
+        color: var(--muted);
+      }
+
+      .search-part {
+        border-right: 1px solid var(--border);
+      }
+
+      .label {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--text);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+
+      input,
+      select {
+        width: 100%;
+        border: 0;
+        outline: 0;
+        background: transparent;
+        color: var(--text);
+        font: inherit;
+        font-size: 18px;
+      }
+
+      .panel input,
+      .panel select,
+      .modal input,
+      .modal select,
+      .modal textarea {
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 12px 14px;
+        background: var(--card);
+      }
+
+      .modal textarea {
+        width: 100%;
+        min-height: 110px;
+        resize: vertical;
+        font: inherit;
+      }
+
+      input::placeholder {
+        color: var(--placeholder);
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 26px;
+      }
+
+      .stat {
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        padding: 14px;
+      }
+
+      .stat strong {
+        display: block;
+        font-size: 24px;
+      }
+
+      .stat span {
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .section-heading {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin: 0 0 18px;
+      }
+
+      .section-heading h2 {
+        margin: 0;
+        font-size: 24px;
+        letter-spacing: -0.03em;
+      }
+
+      .count-bubble {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 30px;
+        height: 24px;
+        border-radius: 999px;
+        background: var(--soft);
+        color: var(--muted);
+        font-weight: 700;
+        font-size: 13px;
+      }
+
+      .task-grid {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 18px;
+      }
+
+      .task {
+        display: flex;
+        flex-direction: column;
+        min-height: 212px;
+        background: var(--card);
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        padding: 16px 18px;
+        transition: transform 160ms ease, box-shadow 160ms ease, border-color 160ms ease;
+      }
+
+      .task:hover {
+        transform: translateY(-2px);
+        border-color: var(--hover-border);
+        box-shadow: var(--shadow-md);
+      }
+
+      .task-historical {
+        opacity: 0.62;
+        filter: grayscale(0.5);
+      }
+
+      .task.task-historical:hover,
+      .task.task-locked:hover {
+        transform: none;
+        border-color: var(--border);
+        box-shadow: none;
+      }
+
+      /* Claimed by someone else: the substance of the tile is unreadable. */
+      .task-locked .task-title,
+      .task-locked .task-id,
+      .task-locked .preview {
+        filter: blur(6px);
+        user-select: none;
+        pointer-events: none;
+      }
+
+      .lock-note {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        margin: 0 0 12px;
+        color: var(--muted);
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .toast {
+        position: fixed;
+        z-index: 1200;
+        max-width: 320px;
+        padding: 11px 14px;
+        border-radius: 12px;
+        border: 1px solid transparent;
+        background: var(--notice-bg);
+        color: var(--notice-ink);
+        font-size: 14px;
+        font-weight: 700;
+        line-height: 1.4;
+        box-shadow: var(--shadow-lg);
+        opacity: 0;
+        transform: translateY(6px);
+        transition: opacity 140ms ease, transform 140ms ease;
+        pointer-events: none;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: none;
+      }
+
+      .toast.is-error {
+        background: var(--red-soft);
+        border-color: var(--red-ink);
+        color: var(--red-ink);
+      }
+
+      .eyebrow {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+
+      .pill {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 5px 10px;
+        color: var(--pill-ink);
+        background: var(--soft);
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1;
+      }
+
+      .Available {
+        background: var(--green-soft);
+        color: var(--green-ink);
+      }
+
+      .Claimed {
+        background: var(--yellow-soft);
+        color: var(--amber-ink);
+      }
+
+      .Submitted {
+        background: var(--purple-soft);
+        color: var(--violet-ink);
+      }
+
+      .Approved {
+        background: var(--green-soft);
+        color: var(--green-ink);
+      }
+
+      .Blocked {
+        background: var(--red-soft);
+        color: var(--red-ink);
+      }
+
+      .Expired,
+      .Abandoned,
+      .Reopened {
+        background: var(--soft);
+        color: var(--muted);
+      }
+
+      .task-title {
+        margin: 0 0 8px;
+        font-size: 17px;
+        line-height: 1.25;
+        letter-spacing: -0.025em;
+        font-weight: 800;
+      }
+
+      .task-id {
+        margin: 0 0 10px;
+        color: var(--muted);
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 13px;
+      }
+
+      .preview {
+        margin: 0 0 12px;
+        color: var(--muted);
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      .task-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        margin-top: auto;
+        padding-top: 14px;
+        border-top: 1px solid var(--line-soft);
+      }
+
+      .link-button,
+      .primary-button,
+      .danger-button,
+      .success-button,
+      .warning-button,
+      .copy-button,
+      .neutral-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 0;
+        border-radius: 12px;
+        padding: 11px 14px;
+        font-weight: 800;
+        font-size: 15px;
+        text-decoration: none;
+        cursor: pointer;
+      }
+
+      .link-button {
+        color: var(--text);
+        background: transparent;
+      }
+
+      .primary-button {
+        color: var(--on-blue);
+        background: var(--blue);
+        box-shadow: 0 10px 24px var(--blue-shadow);
+      }
+
+      .primary-button:hover {
+        background: var(--blue-dark);
+      }
+
+      .danger-button {
+        color: var(--red-ink);
+        background: var(--red-soft);
+      }
+
+      .success-button {
+        color: var(--green-ink);
+        background: var(--green-soft);
+      }
+
+      .warning-button {
+        color: var(--amber-ink);
+        background: var(--orange-soft);
+      }
+
+      .copy-button {
+        color: var(--text);
+        background: var(--soft);
+        border: 1px solid var(--border);
+      }
+
+      .copy-button:hover {
+        background: var(--btn-hover);
+      }
+
+      .neutral-button {
+        color: var(--pill-ink);
+        background: var(--soft);
+        border: 1px solid var(--border);
+      }
+
+      .neutral-button:hover {
+        background: var(--btn-hover);
+      }
+
+      button:disabled,
+      a.disabled,
+      .disabled {
+        opacity: 0.45;
+        cursor: not-allowed;
+      }
+
+      .empty {
+        padding: 36px;
+        border: 1px dashed var(--border);
+        border-radius: 18px;
+        color: var(--muted);
+        background: var(--empty-bg);
+      }
+
+      .list-item {
+        border-top: 1px solid var(--line-soft);
+        padding: 12px 0;
+      }
+
+      .list-item:first-of-type {
+        border-top: 0;
+      }
+
+      .list-title {
+        font-weight: 800;
+      }
+
+      .muted {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .field-hint {
+        display: none;
+        margin-top: 6px;
+        font-size: 13px;
+        line-height: 1.4;
+        color: var(--red-ink);
+      }
+
+      .field-hint a {
+        color: var(--red-ink);
+        font-weight: 700;
+      }
+
+      .floating-notice {
+        position: fixed;
+        right: 24px;
+        bottom: 24px;
+        z-index: 1100;
+        max-width: 340px;
+        background: var(--notice-bg);
+        color: var(--notice-ink);
+        border-radius: 18px 18px 4px 18px;
+        padding: 18px 20px;
+        box-shadow: var(--shadow-lg);
+        font-size: 15px;
+        line-height: 1.5;
+        animation: floatingNoticeIn 260ms ease-out;
+      }
+
+      .floating-notice strong {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 13px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        color: var(--notice-accent);
+      }
+
+      .floating-notice .floating-notice-close {
+        position: absolute;
+        top: 10px;
+        right: 12px;
+        border: 0;
+        background: transparent;
+        color: var(--notice-muted);
+        font-size: 18px;
+        line-height: 1;
+        cursor: pointer;
+      }
+
+      .floating-notice .floating-notice-close:hover {
+        color: var(--notice-ink);
+      }
+
+      @keyframes floatingNoticeIn {
+        from { opacity: 0; transform: translateY(12px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      .metrics-table {
+        width: 100%;
+        margin-top: 16px;
+        border-collapse: collapse;
+        font-size: 15px;
+      }
+
+      .metrics-table th,
+      .metrics-table td {
+        padding: 12px 14px;
+        text-align: left;
+        border-bottom: 1px solid var(--line-soft);
+      }
+
+      .metrics-table th {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .metrics-table td.num,
+      .metrics-table th.num {
+        text-align: right;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .metrics-table tbody tr:hover {
+        background: var(--soft);
+      }
+
+      .metrics-table .domain-cell {
+        font-weight: 800;
+      }
+
+      .metrics-table tr.is-low td.num.available {
+        color: var(--amber-ink);
+        font-weight: 800;
+      }
+
+      .metrics-table tr.is-empty td.num.available {
+        color: var(--red-ink);
+        font-weight: 800;
+      }
+
+      .brand-logo {
+        display: block;
+        width: 156px;
+        max-width: 60vw;
+        margin: 0 0 18px;
+        opacity: 0.92;
+      }
+
+      .brand-logo img {
+        display: block;
+        width: 100%;
+        max-height: 30px;
+        object-fit: contain;
+      }
+
+      body[data-theme="dark"] .brand-logo img {
+        filter: brightness(0) invert(1);
+      }
+
+      @media (max-width: 900px) {
+        .floating-notice {
+          right: 12px;
+          left: 12px;
+          bottom: 12px;
+          max-width: none;
+        }
+      }
+
+      .queue-columns {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 28px;
+        margin-top: 22px;
+      }
+
+      @media (max-width: 900px) {
+        .queue-columns {
+          grid-template-columns: 1fr;
+        }
+      }
+
+      .modal-backdrop {
+        position: fixed;
+        inset: 0;
+        z-index: 1000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 32px;
+        background: var(--overlay);
+      }
+
+      .modal {
+        position: relative;
+        width: min(1080px, 100%);
+        max-height: 88vh;
+        overflow: auto;
+        background: var(--card);
+        border-radius: 28px;
+        padding: 46px 54px 36px;
+        box-shadow: var(--shadow-xl);
+      }
+
+      .modal-close {
+        position: absolute;
+        top: 22px;
+        right: 22px;
+        border: 0;
+        width: 38px;
+        height: 38px;
+        border-radius: 999px;
+        background: var(--soft);
+        color: var(--text);
+        cursor: pointer;
+        font-size: 22px;
+        line-height: 1;
+      }
+
+      .modal h2 {
+        margin: 20px 0 8px;
+        max-width: 850px;
+        font-size: clamp(28px, 4vw, 44px);
+        line-height: 1.05;
+        letter-spacing: -0.045em;
+      }
+
+      .modal .task-id {
+        margin-bottom: 22px;
+        font-size: 15px;
+      }
+
+      .modal-section {
+        margin-top: 24px;
+      }
+
+      .modal-section h3 {
+        margin: 0 0 10px;
+        font-size: 15px;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+      }
+
+      .modal-section p,
+      .modal-section pre {
+        margin: 0;
+        color: var(--muted-strong);
+        font-size: 18px;
+        line-height: 1.55;
+      }
+
+      .modal-section pre {
+        white-space: pre-wrap;
+        font-family: inherit;
+        background: var(--pre-bg);
+        border-radius: 14px;
+        padding: 18px;
+      }
+
+      .modal-footer {
+        display: flex;
+        justify-content: flex-end;
+        gap: 14px;
+        margin-top: 34px;
+        padding-top: 24px;
+        border-top: 1px solid var(--border);
+      }
+
+      .tab-bar {
+        display: flex;
+        gap: 4px;
+        margin-bottom: 24px;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .tab-button {
+        border: 0;
+        background: transparent;
+        padding: 12px 18px;
+        font-weight: 800;
+        font-size: 15px;
+        color: var(--muted);
+        cursor: pointer;
+        border-bottom: 3px solid transparent;
+        margin-bottom: -1px;
+      }
+
+      .tab-button:hover {
+        color: var(--text);
+      }
+
+      .tab-button.active {
+        color: var(--text);
+        border-bottom-color: var(--blue);
+      }
+
+      @media (max-width: 900px) {
+        .panel-grid,
+        .task-grid,
+        .stats {
+          grid-template-columns: 1fr;
+        }
+
+        .search-shell {
+          grid-template-columns: 1fr;
+          border-radius: 24px;
+        }
+
+        .search-part {
+          border-right: 0;
+          border-bottom: 1px solid var(--border);
+        }
+
+        .top-bar {
+          align-items: flex-start;
+          flex-direction: column;
+        }
+
+        .modal {
+          padding: 34px 26px 28px;
+          border-radius: 22px;
+        }
+      }
+    </style>
+
+  </head>
+
+  <body>
+    <header>
+      <div class="brand-logo" aria-label="Snorkel">
+        <img src="https://s46486.pcdn.co/wp-content/uploads/2023/05/snorkel_logo_header-1.svg" alt="Snorkel">
+      </div>
+      <h1>Mojave Task Idea Gallery</h1>
+      <div class="subtitle">Browse task ideas for Project Mojave, claim one idea at a time, then submit your Snorkel Submission ID.</div>
+    </header>
+
+    <main>
+      <div class="top-bar">
+        <div class="identity" id="identity">Loading session...</div>
+        <div class="panel-actions" style="margin-top: 0;">
+          <button class="link-button" id="themeToggle" onclick="toggleTheme()">Dark mode</button>
+          <button class="link-button" onclick="openContributorGuideModal()">How to claim tasks</button>
+          <button class="primary-button" id="signInButton" onclick="signInWithGitHub()">Sign in with GitHub</button>
+          <button class="link-button" id="signOutButton" onclick="signOut()" style="display: none;">Sign out</button>
+        </div>
+      </div>
+
+      <div id="message" class="message"></div>
+      <div id="error" class="error"></div>
+
+      <div id="accessGate" style="display: none;"></div>
+
+      <div id="appContent">
+        <div class="stats" id="stats"></div>
+
+        <div class="panel-grid">
+          <div class="panel" id="myClaimPanel"></div>
+          <div class="panel" id="submittedPanel"></div>
+        </div>
+
+        <div class="tab-bar">
+          <button class="tab-button active" id="tabButtonBrowse" onclick="switchTab('browse')">Browse Tasks</button>
+          <button class="tab-button" id="tabButtonMetrics" onclick="switchTab('metrics')" style="display: none;">Domain metrics</button>
+          <button class="tab-button" id="tabButtonAdmin" onclick="switchTab('admin')" style="display: none;">Admin Tools</button>
+        </div>
+
+        <div id="browseTab">
+          <div class="search-shell">
+            <div class="search-part">
+              <span class="label">Where</span>
+              <input id="search" placeholder="Search ideas... e.g. by topic" oninput="renderTaskList()">
+            </div>
+
+            <div class="filter-part">
+              <span class="label">Status</span>
+              <button class="filter-trigger" id="statusTrigger" onclick="toggleFilterMenu('status', event)">
+                <span class="value" id="statusTriggerLabel">All</span>
+                <span class="chev">&#9660;</span>
+              </button>
+              <div class="filter-menu" id="statusMenu" hidden></div>
+            </div>
+
+            <div class="filter-part">
+              <span class="label">Domain</span>
+              <button class="filter-trigger" id="domainTrigger" onclick="toggleFilterMenu('domain', event)">
+                <span class="value" id="domainTriggerLabel">All</span>
+                <span class="chev">&#9660;</span>
+              </button>
+              <div class="filter-menu" id="domainMenu" hidden></div>
+            </div>
+          </div>
+
+          <div class="active-filters" id="activeFilters"></div>
+
+          <div class="section-heading">
+            <h2 id="sectionTitle">All Mojave Task Ideas</h2>
+            <span class="count-bubble" id="visibleCount">0</span>
+          </div>
+
+          <div id="taskList">Loading tasks...</div>
+        </div>
+
+        <div id="metricsTab" style="display: none;"></div>
+
+        <div class="panel" id="adminTab" style="display: none;"></div>
+      </div>
+    </main>
+
+    <div id="floatingNotice"></div>
+
+    <script>
+      const CLAIM_TTL_HOURS = 24;
+      const SLACK_HELP_URL = "https://snorkel-ai.slack.com";
+
+      // Master switch: Workflow A is wound down. When true, every task idea is
+      // blocked/greyed and can no longer be claimed by anyone (admins included),
+      // and the floating disclaimer bubble is shown. Set to false to reopen.
+      const WORKFLOW_A_CLOSED = false;
+      const WORKFLOW_A_CLOSED_MESSAGE = "We're no longer working on Workflow A tasks so the task ideas are no longer available. Please complete any Workflow A revisions and prioritize Workflow B.";
+      const SUBMISSION_ID_HELP_IMG = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAABDYAAAEQCAYAAABLHvTAAAABgWlDQ1BrQ0dDb2xvclNwYWNlSVRVUl8yMDIwX3NSR0JHYW1tYQAAKJF9kb9KA0EQxr9ERYix0sLCYisLSYJGOxuTCEGwCDGBRG0ul7+QXJa7E7H0DQTfQAstkjewsLcRRCuxUXwABRE0rt/eRRIRnWVufnyzOzPMAcE1Q8rmKICW5drZdFIUilti/AkBHs8M05GJTGZD83f8aa+3/t3rqK71O/+vhcoVx2T8oO+Y0naBQIGc2XOl5jPytM2hyOeaaz5faS75/OjdyWVT5DeyMOtGGQjOkCOlIb02xK3mrtmfQU8frlj5TcZV+iyyqMBEDALryCGPKBWBJDmGOBY8j2IRK1Qd5tLMCX4NtHiMP2ove7VTaENiHzYaqKEOly8TVCSa7Ko7Wl7vCNnvFdf/pL/rm/6uIwOt0wDSbaXUwUCbp9Z5AMa7A02MABNd4PJTGrbhSVQQrFaB51NgsghMca+hbae6FPenDyeBsXulXuZY6wjoHSr1fqxU74SP74AL6wtvoWgy/vRbsQAAAARjSUNQCQ0AAVndE90AAAA4ZVhJZk1NACoAAAAIAAGHaQAEAAAAAQAAABoAAAAAAAKgAgAEAAAAAQAABDagAwAEAAAAAQAAARAAAAAAXv7SmQAAQABJREFUeAHsnQm8FtMbxw9ZsrRolS2yiyxl39fIlkIklaiI7MqWLVT2nUiLpdVSob8tyU6yb1lClEqSQpTyP7+p83bue2fmXe576473+3w+987M2ebM98zMO+c5z3nOSr/Pm/OvQSAAAQhAAAIQgAAEIAABCEAAAhCAQAIJrJzAOlNlCEAAAhCAAAQgAAEIQAACEIAABCAQEECxwY0AAQhAAAIQgAAEIAABCEAAAhCAQGIJoNhIbNNRcQhAAAIQgAAEIAABCEAAAhCAAARQbHAPQAACEIAABCAAAQhAAAIQgAAEIJBYAig2Ett0VBwCEIAABCAAAQhAAAIQgAAEIAABFBvcAxCAAAQgAAEIQAACEIAABCAAAQgklgCKjcQ2HRWHAAQgAAEIQAACEIAABCAAAQhAAMUG9wAEIAABCEAAAhCAAAQgAAEIQAACiSWAYiOxTUfFIQABCEAAAhCAAAQgAAEIQAACEECxwT0AAQhAAAIQgAAEIAABCEAAAhCAQGIJoNhIbNNRcQhAAAIQgAAEIAABCEAAAhCAAARQbHAPQAACEIAABCAAAQhAAAIQgAAEIJBYAig2Ett0VBwCEIAABCAAAQhAAAIQgAAEIAABFBvcAxCAAAQgAAEIQAACEIAABCAAAQgklgCKjcQ2HRWHAAQgAAEIQAACEIAABCAAAQhAAMUG9wAEIAABCEAAAhCAAAQgAAEIQAACiSWAYiOxTUfFIQABCEAAAhCAAAQgAAEIQAACEECxwT0AAQhAAAIQgAAEIAABCEAAAhCAQGIJoNhIbNNRcQhAAAIQgAAEIAABCEAAAhCAAARQbHAPQAACEIAABCAAAQhAAAIQgAAEIJBYAig2Ett0VBwCEIAABCAAAQhAAAIQgAAEIAABFBvcAxCAAAQgAAEIQAACEIAABCAAAQgklgCKjcQ2HRWHAAQgAAEIQAACEIAABCAAAQhAAMUG9wAEIAABCEAAAhCAAAQgAAEIQAACiSWAYiOxTUfFIQABCEAAAhCAAAQgAAEIQAACEECxwT0AAQhAAAIQgAAEIAABCEAAAhCAQGIJoNhIbNNRcQhAAAIQgAAEIAABCEAAAhCAAARQbHAPQAACEIAABCAAAQhAAAIQgAAEIJBYAig2Ett0VBwCEIAABCAAAQhAAAIQgAAEIAABFBvcAxCAAAQgAAEIQAACEIAABCAAAQgklgCKjcQ2HRWHAAQgAAEIQAACEIAABCAAAQhAAMUG9wAEIAABCEAAAhCAAAQgAAEIQAACiSWAYiOxTUfFIQABCEAAAhCAAAQgAAEIQAACEECxwT0AAQhAAAIQgAAEIAABCEAAAhCAQGIJoNhIbNNRcQhAAAIQgAAEIAABCEAAAhCAAARQbHAPQAACEIAABCAAAQhAAAIQgAAEIJBYAig2Ett0VBwCEIAABCAAAQhAAAIQgAAEIAABFBvcAxCAAAQgAAEIQAACEIAABCAAAQgklgCKjcQ2HRWHAAQgAAEIQAACEIAABCAAAQhAAMUG9wAEIAABCEAAAhCAAAQgAAEIQAACiSWAYiOxTUfFIQABCEAAAhCAAAQgAAEIQAACEECxwT0AAQhAAAIQgAAEIAABCEAAAhCAQGIJoNhIbNNRcQhAAAIQgAAEIAABCEAAAhCAAARQbHAPQAACEIAABCAAAQhAAAIQgAAEIJBYAig2Ett0VBwCEIAABCAAAQhA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jXrrRskIECBAgAABAgQIECBAgACBHgGBjR4gqwkQIECAAAECBAgQIECAAIF6BQQ26q0bJSNAgAABAgQIECBAgAABAgR6BAQ2eoCsJkCAAAECBAgQIECAAAECBOoVENiot26UjAABAgQIECBAgAABAgQIEOgRENjoAbKaAAECBAgQIECAAAECBAgQqFdAYKPeulEyAgQIECBAgAABAgQIECBAoEdAYKMHyGoCBAgQIECAAAECBAgQIECgXgGBjXrrRskIECBAgAABAgQIECBAgACBHgGBjR4gqwkQIECAAAECBAgQIECAAIF6BQQ26q0bJSNAgAABAgQIECBAgAABAgR6BAQ2eoCsJkCAAAECBAgQIECAAAECBOoVENiot26UjAABAgQIECBAgAABAgQIEOgRENjoAbKaAAECBAgQIECAAAECBAgQqFdAYKPeulEyAgQIECBAgAABAgQIECBAoEdAYKMHyGoCBAgQIECAAAECBAgQIECgXgGBjXrrRskIECBAgAABAgQIECBAgACBHgGBjR4gqwkQIECAAAECBAgQIECAAIF6BQQ26q0bJSNAgAABAgQIECBAgAABAgR6BAQ2eoCsJkCAAAECBAgQIECAAAECBOoVENiot26UjAABAgQIECBAgAABAgQIEOgRENjoAbKaAAECBAgQIECAAAECBAgQqFdAYKPeulEyAgQIECBAgAABAgQIECBAoEdAYKMHyGoCBAgQIECAAAECBAgQIECgXgGBjXrrRskIECBAgAABAgQIECBAgACBHgGBjR4gqwkQIECAAAECBAgQIECAAIF6BQQ26q0bJSNAgAABAgQIECBAgAABAgR6BAQ2eoCsJkCAAAECBAgQIECAAAECBOoVENiot26UjAABAgQIECBAgAABAgQIEOgRENjoAbKaAAECBAgQIECAAAECBAgQqFfg2HqLNrdkTz/zj7kP+IsAAQIECBAgQIAAAQIECBBY9QJ6bKz6QwAAAQIECBAgQIAAAQIECBBYuQIrpsfGGadvWLnKR0HJ2x4z6uEoqExvgQABAgQIECAwQuDAwf+MePSlh0589dqX/vAbAQIEKhLQY6OiylAUAgQIECBAgAABAgQIECBAYDYBgY3ZvGxNgAABAgQIECBAgAABAgQIVCQgsFFRZSgKAQIECBAgQIAAAQIECBAgMJuAwMZsXrYmQIAAAQIECBAgQIAAAQIEKhIQ2KioMhSFAAECBAgQIECAAAECBAgQmE1AYGM2L1sTIECAAAECBAgQIECAAAECFQn8HzIihMr7jWA7AAAAAElFTkSuQmCC";
+      // Snorkel submission UIDs are UUID v4. Verified against a real sample:
+      // every ID had version nibble 4 and variant nibble 8/9/a/b.
+      // Input is trimmed + lowercased before testing, so copy-paste whitespace
+      // or capitalization never causes a false rejection.
+      // (If you ever need to accept non-v4 UUIDs, swage to UUID_SHAPE_LENIENT.)
+      const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/;
+      // const UUID_SHAPE_LENIENT = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/;
+
+      function normalizeSubmissionId(value) {
+        return String(value || "").trim().toLowerCase();
+      }
+
+      function isValidSubmissionId(value) {
+        return UUID_V4.test(normalizeSubmissionId(value));
+      }
+
+      const EXCLUDED_TASK_TITLES = new Set([]);
+      const ADMIN_EMAILS = [
+        "tyler.davis@snorkel.ai",
+        "cairo.simpson@snorkel.ai",
+        "fernando.perezrivera@snorkel.ai",
+        "hao.nguyen@snorkel.ai",
+        "alyssa.billy@snorkel.ai"
+      ];
+
+      let TASKS = [];
+      let CLAIMS = [];
+      let currentUser = null;
+
+      const LOCAL_DB = {
+        harbor_tasks: [
+          {
+                    "id": "idea-0001-4a1b-8c2d-000000000001",
+                    "display_id": "1",
+                    "priority": "Candidate",
+                    "compute_type": "",
+                    "domain": "Sociology",
+                    "subdomain": "Social Theory",
+                    "paper_title": "Same pattern, two theories",
+                    "venue_year": "",
+                    "sources": [],
+                    "task_concept": "Describe a documented pattern in class reproduction or mobility that more than one tradition would claim, then ask which account it actually fits. The discriminating detail should be somewhere in the description.",
+                    "suggested_harbor_steps": "Traditions that agree on the outcome but not on the mechanism.\nDo not name any theorist in the stem.",
+                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage."
+          },
+          {
+                    "id": "idea-0002-4a1b-8c2d-000000000002",
+                    "display_id": "2",
+                    "priority": "Candidate",
+                    "compute_type": "",
+                    "domain": "Sociology",
+                    "subdomain": "Sociology of Family",
+                    "paper_title": "A household arrangement that cuts against the trend",
+                    "venue_year": "",
+                    "sources": [],
+                    "task_concept": "A family form that runs counter to what the standard account of the period would predict. Ask what best explains it, with the explanation turning on a condition stated in the scenario.",
+                    "suggested_harbor_steps": "The exception is real and documented, not invented for effect.\nThe answer should not be reachable by naming the general trend.",
+                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage."
+          },
+          {
+                    "id": "idea-0003-4a1b-8c2d-000000000003",
+                    "display_id": "3",
+                    "priority": "Candidate",
+                    "compute_type": "",
+                    "domain": "History",
+                    "subdomain": "American History",
+                    "paper_title": "Which cause did the work",
+                    "venue_year": "",
+                    "sources": [],
+                    "task_concept": "Several plausible causes sit behind one outcome. Ask which one was most directly responsible, where the answer requires weighing them against each other rather than listing them.",
+                    "suggested_harbor_steps": "Counterfactual framing works well here - what if one factor had been absent.\nAvoid anything a date alone would settle.",
+                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage."
+          },
+          {
+                    "id": "idea-0004-4a1b-8c2d-000000000004",
+                    "display_id": "4",
+                    "priority": "Candidate",
+                    "compute_type": "",
+                    "domain": "Anthropology",
+                    "subdomain": "Archaeology",
+                    "paper_title": "What the assemblage can and cannot support",
+                    "venue_year": "",
+                    "sources": [],
+                    "task_concept": "Give a described assemblage - materials, context, associations - and ask which inference the evidence actually licenses. The trap is the interpretation that is popular but underdetermined by what is present.",
+                    "suggested_harbor_steps": "Ask which conclusion is NOT supported.\nKeep every stated find real and plausible for the region and period.",
+                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage."
+          },
+          {
+                    "id": "idea-0005-4a1b-8c2d-000000000005",
+                    "display_id": "5",
+                    "priority": "Candidate",
+                    "compute_type": "",
+                    "domain": "Iberian and Latin American Cultures",
+                    "subdomain": "Indigenous Studies",
+                    "paper_title": "Whose framework is doing the reading",
+                    "venue_year": "",
+                    "sources": [],
+                    "task_concept": "Present a text, object, or practice alongside two interpretive frameworks that would read it differently, and ask which reading the described details support.",
+                    "suggested_harbor_steps": "The details in the stem should settle it, not the reader's sympathies.\nNo theorist or school named in the stem.",
+                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage."
+          },
+          {
+                    "id": "idea-0006-4a1b-8c2d-000000000006",
+                    "display_id": "6",
+                    "priority": "Candidate",
+                    "compute_type": "",
+                    "domain": "Communication",
+                    "subdomain": "Journalism",
+                    "paper_title": "The norm that quietly conflicts with another",
+                    "venue_year": "",
+                    "sources": [],
+                    "task_concept": "A reporting scenario where two professional norms pull in opposite directions. Ask what the standards actually require here, not what feels defensible.",
+                    "suggested_harbor_steps": "Build it on codified, current standards, not on vibes about ethics.\nStrong distractors are the norms that almost apply.",
+                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage."
+          },
+          {
+                    "id": "idea-0007-4a1b-8c2d-000000000007",
+                    "display_id": "7",
+                    "priority": "Candidate",
+                    "compute_type": "",
+                    "domain": "French, Italian, and German",
+                    "subdomain": "Francophone Studies",
+                    "paper_title": "A form that changes meaning in translation",
+                    "venue_year": "",
+                    "sources": [],
+                    "task_concept": "A passage or work whose effect depends on something structural - register, form, address - and ask what is lost or altered when that feature moves across languages or contexts.",
+                    "suggested_harbor_steps": "Quoted source text may stay in the original; everything else in English.\nThe answer should turn on the formal feature, not on plot.",
+                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage."
+          }
+],
+        harbor_selected_tasks: []
+      };
+
+      const DEMO_USER = { id: "local-demo-user", email: "tyler.davis@snorkel.ai" };
+
+      let localSession = null;
+      let localClaimSeq = 1;
+
+      function localMatches(row, filters) {
+        return filters.every(f => {
+          if (f.op === "eq") return row[f.col] === f.val;
+          if (f.op === "in") return f.val.includes(row[f.col]);
+          return true;
+        });
+      }
+
+      function localExpireClaims() {
+        const now = Date.now();
+        let count = 0;
+
+        LOCAL_DB.harbor_selected_tasks.forEach(claim => {
+          if (claim.status === "claimed" && claim.expires_at && new Date(claim.expires_at).getTime() < now) {
+            claim.status = "expired";
+            claim.expires_at = null;
+            count += 1;
+          }
+        });
+
+        return count;
+      }
+
+      class LocalQuery {
+        constructor(table) {
+          this.table = table;
+          this.op = "select";
+          this.payload = null;
+          this.filters = [];
+          this.orderBy = null;
+        }
+
+        select(_cols) { this.op = "select"; return this; }
+        insert(payload) { this.op = "insert"; this.payload = payload; return this; }
+        update(payload) { this.op = "update"; this.payload = payload; return this; }
+        upsert(payload, opts) { this.op = "upsert"; this.payload = payload; this.onConflict = opts?.onConflict; return this; }
+        order(col, opts) { this.orderBy = { col, ascending: opts?.ascending !== false }; return this; }
+        eq(col, val) { this.filters.push({ op: "eq", col, val }); return this; }
+        in(col, val) { this.filters.push({ op: "in", col, val }); return this; }
+
+        run() {
+          const rows = LOCAL_DB[this.table];
+
+          if (!rows) return { data: null, error: { message: "Unknown table " + this.table } };
+
+          if (this.op === "select") {
+            let out = rows.filter(r => localMatches(r, this.filters)).map(r => ({ ...r }));
+
+            if (this.orderBy) {
+              const { col, ascending } = this.orderBy;
+              out.sort((a, b) => {
+                const av = a[col], bv = b[col];
+                const an = parseInt(av, 10), bn = parseInt(bv, 10);
+                let cmp;
+                if (Number.isFinite(an) && Number.isFinite(bn)) cmp = an - bn;
+                else cmp = String(av || "").localeCompare(String(bv || ""));
+                return ascending ? cmp : -cmp;
+              });
+            }
+
+            return { data: out, error: null };
+          }
+
+          if (this.op === "insert") {
+            const row = { id: "claim-" + (localClaimSeq++), ...this.payload };
+            rows.push(row);
+            return { data: [row], error: null };
+          }
+
+          if (this.op === "update") {
+            const hit = rows.filter(r => localMatches(r, this.filters));
+            hit.forEach(r => Object.assign(r, this.payload));
+            return { data: hit, error: null };
+          }
+
+          if (this.op === "upsert") {
+            const key = this.onConflict || "id";
+            const existing = rows.find(r => r[key] === this.payload[key]);
+            if (existing) Object.assign(existing, this.payload);
+            else rows.push({ id: "task-" + (rows.length + 1), ...this.payload });
+            return { data: [this.payload], error: null };
+          }
+
+          return { data: null, error: { message: "Unsupported op" } };
+        }
+
+        then(resolve, reject) {
+          try { return Promise.resolve(this.run()).then(resolve, reject); }
+          catch (err) { return Promise.reject(err).catch(reject); }
+        }
+      }
+
+      // Stands in for the Supabase client: same call shapes, but all state lives
+      // in this page for the session. Nothing is persisted or sent anywhere.
+      const supabaseClient = {
+        from(table) { return new LocalQuery(table); },
+        rpc(name) {
+          if (name === "expire_old_harbor_claims") {
+            localExpireClaims();
+            return Promise.resolve({ data: null, error: null });
+          }
+          if (name === "clear_expired_harbor_claims") {
+            return Promise.resolve({ data: localExpireClaims(), error: null });
+          }
+          return Promise.resolve({ data: null, error: null });
+        },
+        auth: {
+          getSession() { return Promise.resolve({ data: { session: localSession }, error: null }); },
+          signInWithOAuth() {
+            localSession = { user: DEMO_USER };
+            currentUser = DEMO_USER;
+            return loadTasks().then(() => ({ error: null }));
+          },
+          signOut() {
+            localSession = null;
+            return Promise.resolve({ error: null });
+          }
+        }
+      };
+
+      async function loadSession() {
+        const { data, error } = await supabaseClient.auth.getSession();
+
+        if (error) {
+          console.error(error);
+          showError("Could not load session.");
+          return;
+        }
+
+        currentUser = data.session?.user || null;
+      }
+
+      async function signInWithGitHub() {
+        const { error } = await supabaseClient.auth.signInWithOAuth({
+          provider: "github",
+          options: {
+            redirectTo: "https://snorkel-ai.github.io/otter-harbor-task-claims/"
+          }
+        });
+
+        if (error) {
+          console.error(error);
+          showError("Could not start GitHub sign-in.");
+        }
+      }
+
+      async function signOut() {
+        await supabaseClient.auth.signOut();
+        currentUser = null;
+        await loadTasks();
+      }
+
+      function isAdmin() {
+        const email = String(currentUser?.email || "").toLowerCase();
+        return ADMIN_EMAILS.includes(email);
+      }
+
+      const RETIRED_MAX_DISPLAY_ID = 0;
+
+      function isRetiredTask(task) {
+        const n = parseInt(task.task_id, 10);
+        const retiredByDisplayId = Number.isFinite(n) && n <= RETIRED_MAX_DISPLAY_ID;
+        const retiredByTitle = EXCLUDED_TASK_TITLES.has(String(task.paper_title || "").trim());
+        return retiredByDisplayId || retiredByTitle;
+      }
+
+      function isRetiredAndUnclaimed(task) {
+        return isRetiredTask(task) && task.status === "Available";
+      }
+
+      function effectiveStatus(task) {
+        // Workflow A wound down: any still-open task shows as Blocked.
+        if (WORKFLOW_A_CLOSED && task.status === "Available") {
+          return "Blocked";
+        }
+        if (isRetiredAndUnclaimed(task)) {
+          return "Blocked";
+        }
+        return task.status;
+      }
+
+      const GREYED_STATUSES = new Set(["Submitted", "Approved", "Blocked", "Ungradeable"]);
+
+      function isHistoricalTask(task) {
+        // Keep an owner's own in-flight task (and admin view) accessible even
+        // after wind-down, but everything else greys out.
+        if (task.active_claim_owned_by_me && ["Claimed", "Submitted", "Blocked", "Ungradeable"].includes(task.status)) {
+          return false;
+        }
+
+        if (WORKFLOW_A_CLOSED) {
+          return !isAdmin();
+        }
+
+        if (isRetiredTask(task)) {
+          return !task.active_claim_owned_by_me && !isAdmin();
+        }
+
+        return GREYED_STATUSES.has(task.status);
+      }
+
+      // Anything held by another contributor is unreadable to everyone but
+      // the owner and admins.
+      function isLockedTask(task) {
+        if (isAdmin()) return false;
+        if (task.active_claim_owned_by_me) return false;
+        return effectiveStatus(task) !== "Available";
+      }
+
+      function claimStatusActorEmail(task) {
+        if (task.status === "Approved") {
+          return task.active_claim_admin_email || task.active_claim_email || "";
+        }
+        return task.active_claim_email || "";
+      }
+
+      async function expireOldClaims() {
+        const { error } = await supabaseClient.rpc("expire_old_harbor_claims");
+
+        if (error) {
+          console.error(error);
+        }
+      }
+
+      async function loadTasks() {
+        clearMessage();
+        clearError();
+
+        await expireOldClaims();
+
+        const { data: tasksData, error: tasksError } = await supabaseClient
+          .from("harbor_tasks")
+          .select("*")
+          .order("display_id", { ascending: true });
+
+        if (tasksError) {
+          console.error(tasksError);
+          showError("Could not load task ideas:\n" + tasksError.message);
+          return;
+        }
+
+        const { data: claimsData, error: claimsError } = await supabaseClient
+          .from("harbor_selected_tasks")
+          .select("id, task_id, user_id, user_email, status, snorkel_submission_id, selected_at, submitted_for_review_at, completed_at, reviewed_by, reviewed_at, expires_at, admin_email, notes")
+          .order("selected_at", { ascending: false });
+
+        if (claimsError) {
+          console.error(claimsError);
+          showError("Could not load claim state:\n" + claimsError.message);
+          return;
+        }
+
+        CLAIMS = claimsData || [];
+
+        TASKS = (tasksData || [])
+          .map((task) => {
+          const activeClaim = getCurrentClaimForTask(task.id);
+          const ownedByCurrentUser = Boolean(
+            activeClaim &&
+            currentUser &&
+            activeClaim.user_id === currentUser.id
+          );
+
+          return {
+            ...task,
+            task_id: task.display_id,
+            status: activeClaim ? claimStatusLabel(activeClaim.status) : "Available",
+            active_claim_id: activeClaim?.id || null,
+            active_claim_user_id: activeClaim?.user_id || null,
+            active_claim_email: activeClaim?.user_email || "",
+            active_claim_admin_email: activeClaim?.admin_email || "",
+            active_claim_owned_by_me: ownedByCurrentUser,
+            active_claim_submission_id: activeClaim?.snorkel_submission_id || "",
+            active_claim_selected_at: activeClaim?.selected_at || "",
+            active_claim_expires_at: activeClaim?.expires_at || "",
+            active_claim_submitted_at: activeClaim?.submitted_for_review_at || "",
+            active_claim_completed_at: activeClaim?.completed_at || ""
+          };
+        });
+
+        TASKS.sort((a, b) => {
+          const aId = parseInt(a.task_id, 10);
+          const bId = parseInt(b.task_id, 10);
+          if (Number.isFinite(aId) && Number.isFinite(bId) && aId !== bId) {
+            return aId - bId;
+          }
+          return String(a.task_id).localeCompare(String(b.task_id));
+        });
+
+        render();
+      }
+
+      function getCurrentClaimForTask(taskUuid) {
+        return CLAIMS.find(claim => {
+          return claim.task_id === taskUuid &&
+            ["claimed", "submitted", "approved", "blocked", "ungradeable"].includes(claim.status);
+        }) || null;
+      }
+
+      function getMyActiveClaim() {
+        if (!currentUser) return null;
+
+        return TASKS.find(task =>
+          task.status === "Claimed" &&
+          task.active_claim_owned_by_me
+        ) || null;
+      }
+
+      function getMySubmittedTasks() {
+        if (!currentUser) return [];
+
+        return TASKS.filter(task =>
+          task.active_claim_owned_by_me &&
+          ["Submitted", "Approved", "Ungradeable"].includes(task.status)
+        );
+      }
+
+      // Official Mojave taxonomy, limited to the domains this gallery uses.
+      // Subtopics must come from this list — the add-idea form only offers these.
+      const DOMAIN_SUBDOMAINS = {
+        "Anthropology": [
+                "Anthropology - Core",
+                "Archaeology",
+                "Biological Anthropology",
+                "Cultural Anthropology",
+                "Forensic Anthropology",
+                "Linguistic Anthropology",
+                "Medical Anthropology",
+                "Social Anthropology"
+        ],
+        "Communication": [
+                "Advertising",
+                "Communication - Core",
+                "Communication Theory",
+                "Digital Communication",
+                "Health Communication",
+                "Journalism",
+                "Mass Communication",
+                "Media Effects",
+                "Media Studies",
+                "Public Relations"
+        ],
+        "French, Italian, and German": [
+                "Francophone Studies",
+                "French Cinema",
+                "French Literature",
+                "German Film",
+                "German History",
+                "German Literature",
+                "German Philosophy",
+                "Germanic Linguistics",
+                "Germanic Mythology",
+                "Italian Art History",
+                "Italian Literature",
+                "Italian Renaissance",
+                "Yiddish Studies"
+        ],
+        "History": [
+                "American History",
+                "Ancient History",
+                "Asian History",
+                "Cultural History",
+                "European History",
+                "Historiography",
+                "History - Core",
+                "History of Science",
+                "Modern History",
+                "Public History",
+                "World History"
+        ],
+        "Iberian and Latin American Cultures": [
+                "Iberian and Latin American Cultures - Core",
+                "Iberian Culture",
+                "Iberian History",
+                "Indigenous Studies",
+                "Latin American Film",
+                "Latin American history",
+                "Latin American Literature",
+                "Latin American Politics",
+                "Spanish Literature"
+        ],
+        "Sociology": [
+                "Environmental Sociology",
+                "Medical Sociology",
+                "Social Theory",
+                "Sociology - Core",
+                "Sociology of Education",
+                "Sociology of Family",
+                "Sociology of Religion",
+                "Urban Sociology"
+        ]
+};
+
+      const MOJAVE_DOMAINS = Object.keys(DOMAIN_SUBDOMAINS).sort();
+
+      function subdomainsFor(domain) {
+        return DOMAIN_SUBDOMAINS[domain] || [];
+      }
+
+      function isValidDomainPair(domain, subdomain) {
+        return subdomainsFor(domain).includes(subdomain);
+      }
+
+      // A domain is flagged once this many or fewer of its ideas are still
+      // available to claim. Tune here.
+      const LOW_DOMAIN_THRESHOLD = 2;
+
+      function getDomainCoverage() {
+        const rows = new Map();
+
+        TASKS.forEach(task => {
+          const domain = String(task.domain || "").trim() || "Unassigned";
+
+          if (!rows.has(domain)) {
+            rows.set(domain, {
+              domain, total: 0, available: 0, claimed: 0,
+              submitted: 0, approved: 0, other: 0, used: 0
+            });
+          }
+
+          const row = rows.get(domain);
+          const status = effectiveStatus(task);
+
+          row.total += 1;
+
+          if (status === "Available") row.available += 1;
+          else if (status === "Claimed") row.claimed += 1;
+          else if (status === "Submitted") row.submitted += 1;
+          else if (status === "Approved") row.approved += 1;
+          else row.other += 1;
+
+          // "Used" is anything that has left the available pool.
+          if (status !== "Available") row.used += 1;
+        });
+
+        // Thinnest domains first so the gaps are the first thing you see.
+        return [...rows.values()].sort((a, b) =>
+          a.available - b.available || a.domain.localeCompare(b.domain)
+        );
+      }
+
+      function domainFlag(row) {
+        if (row.available === 0) return { label: "None available", pill: "Blocked", cls: "is-empty" };
+        if (row.available <= LOW_DOMAIN_THRESHOLD) return { label: "Low", pill: "Claimed", cls: "is-low" };
+        return { label: "OK", pill: "Available", cls: "" };
+      }
+
+      function renderMetricsPanel() {
+        const panel = document.getElementById("metricsTab");
+        if (!panel) return;
+
+        if (!isAdmin()) {
+          panel.innerHTML = "";
+          return;
+        }
+
+        const rows = getDomainCoverage();
+
+        if (!rows.length) {
+          panel.innerHTML = '<div class="panel"><h2>Domain metrics</h2><p>No domains to count yet.</p></div>';
+          return;
+        }
+
+        const flagged = rows.filter(row => row.available <= LOW_DOMAIN_THRESHOLD);
+        const totals = rows.reduce((acc, row) => ({
+          total: acc.total + row.total,
+          available: acc.available + row.available,
+          claimed: acc.claimed + row.claimed,
+          submitted: acc.submitted + row.submitted,
+          approved: acc.approved + row.approved,
+          used: acc.used + row.used
+        }), { total: 0, available: 0, claimed: 0, submitted: 0, approved: 0, used: 0 });
+
+        panel.innerHTML = `
+          <div class="panel">
+            <div class="section-heading">
+              <h2>Domain metrics</h2>
+              <span class="count-bubble">${rows.length}</span>
+            </div>
+
+            <p class="muted">
+              Ideas by domain, thinnest first. A domain is flagged at ${LOW_DOMAIN_THRESHOLD} or fewer still available to claim.
+              ${flagged.length
+                ? `<strong>Needs topping up: ${escapeHtml(flagged.map(row => row.domain).join(" · "))}.</strong>`
+                : "Every domain is above the line."}
+            </p>
+
+            <table class="metrics-table">
+              <thead>
+                <tr>
+                  <th>Domain</th>
+                  <th class="num">Available</th>
+                  <th class="num">Claimed</th>
+                  <th class="num">Submitted</th>
+                  <th class="num">Approved</th>
+                  <th class="num">Used</th>
+                  <th class="num">Total</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rows.map(row => {
+                  const flag = domainFlag(row);
+
+                  return `
+                    <tr class="${flag.cls}">
+                      <td class="domain-cell">${escapeHtml(row.domain)}</td>
+                      <td class="num available">${row.available}</td>
+                      <td class="num">${row.claimed}</td>
+                      <td class="num">${row.submitted}</td>
+                      <td class="num">${row.approved}</td>
+                      <td class="num">${row.used}</td>
+                      <td class="num">${row.total}</td>
+                      <td><span class="pill ${flag.pill}">${escapeHtml(flag.label)}</span></td>
+                    </tr>
+                  `;
+                }).join("")}
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td class="domain-cell">All domains</td>
+                  <td class="num">${totals.available}</td>
+                  <td class="num">${totals.claimed}</td>
+                  <td class="num">${totals.submitted}</td>
+                  <td class="num">${totals.approved}</td>
+                  <td class="num">${totals.used}</td>
+                  <td class="num">${totals.total}</td>
+                  <td></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+        `;
+      }
+
+      function getAdminReviewQueue() {
+        if (!isAdmin()) return [];
+
+        return TASKS.filter(task => task.status === "Submitted");
+      }
+
+      function getAdminUngradeableQueue() {
+        if (!isAdmin()) return [];
+
+        return TASKS.filter(task => task.status === "Ungradeable");
+      }
+
+      function claimStatusLabel(status) {
+        if (status === "claimed") return "Claimed";
+        if (status === "submitted") return "Submitted";
+        if (status === "approved") return "Approved";
+        if (status === "blocked") return "Blocked";
+        if (status === "ungradeable") return "Ungradeable";
+        return "Available";
+      }
+
+      function render() {
+        renderIdentity();
+
+        let gateState = "none";
+        if (!currentUser) {
+          gateState = "signin";
+        }
+
+        renderAccessGate(gateState);
+        toggleAppContent(gateState === "none");
+
+        if (gateState !== "none") return;
+
+        renderStats();
+        renderMyClaimPanel();
+        renderSubmittedPanel();
+        renderAdminPanel();
+        renderTaskList();
+      }
+
+      function toggleAppContent(show) {
+        const el = document.getElementById("appContent");
+        if (el) el.style.display = show ? "" : "none";
+      }
+
+      function renderAccessGate(gateState) {
+        const el = document.getElementById("accessGate");
+        if (!el) return;
+
+        if (gateState === "none") {
+          el.style.display = "none";
+          el.innerHTML = "";
+          return;
+        }
+
+        el.style.display = "block";
+
+        if (gateState === "signin") {
+          el.innerHTML = `
+            <div class="panel">
+              <h2>Sign in to view this dashboard</h2>
+              <p>This dashboard is limited to approved contributors. Sign in with GitHub to continue.</p>
+              <div class="panel-actions">
+                <button class="primary-button" onclick="signInWithGitHub()">Sign in with GitHub</button>
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+      }
+
+      function renderIdentity() {
+        const identity = document.getElementById("identity");
+        const signInButton = document.getElementById("signInButton");
+        const signOutButton = document.getElementById("signOutButton");
+
+        if (!currentUser) {
+          identity.textContent = "Not signed in.";
+          signInButton.style.display = "inline-flex";
+          signOutButton.style.display = "none";
+          return;
+        }
+
+        identity.textContent = `Signed in as ${currentUser.email || currentUser.id}${isAdmin() ? " · Admin" : ""}`;
+        signInButton.style.display = "none";
+        signOutButton.style.display = "inline-flex";
+      }
+
+      function renderStats() {
+        const counts = {
+          total: TASKS.length,
+          available: TASKS.filter(t => effectiveStatus(t) === "Available").length,
+          claimed: TASKS.filter(t => t.status === "Claimed").length,
+          submitted: TASKS.filter(t => t.status === "Submitted").length,
+          approved: TASKS.filter(t => t.status === "Approved").length
+        };
+
+        document.getElementById("stats").innerHTML = `
+          <div class="stat"><strong>${counts.total}</strong><span>Total</span></div>
+          <div class="stat"><strong>${counts.available}</strong><span>Available</span></div>
+          <div class="stat"><strong>${counts.claimed}</strong><span>Claimed</span></div>
+          <div class="stat"><strong>${counts.submitted}</strong><span>Submitted</span></div>
+          <div class="stat"><strong>${counts.approved}</strong><span>Approved</span></div>
+        `;
+      }
+
+      function renderMyClaimPanel() {
+        const panel = document.getElementById("myClaimPanel");
+
+        if (!currentUser) {
+          panel.innerHTML = `
+            <h2>Your active claim</h2>
+            <p>Sign in with GitHub to claim and submit tasks.</p>
+            <div class="panel-actions">
+              <button class="primary-button" onclick="signInWithGitHub()">Sign in with GitHub</button>
+            </div>
+          `;
+          return;
+        }
+
+        const claim = getMyActiveClaim();
+
+        if (!claim) {
+          panel.innerHTML = `
+            <h2>Your active claim</h2>
+            <p>You do not currently have an active claim.</p>
+          `;
+          return;
+        }
+
+        panel.innerHTML = `
+          <h2>Your active claim</h2>
+          <div class="list-title">#${escapeHtml(claim.task_id)} — ${escapeHtml(claim.paper_title)}</div>
+          <div class="muted">Claimed ${formatDate(claim.active_claim_selected_at)}</div>
+          <div class="muted">Expires ${formatDate(claim.active_claim_expires_at)}</div>
+
+          <div style="margin-top: 14px;">
+            <input id="snorkelSubmissionId" placeholder="Snorkel Submission ID" oninput="onSubmissionIdInput()">
+            <p class="muted" style="margin-top: 6px;">Please ensure this is the proper UID from the upper left hand side of the task UI</p>
+            <p class="field-hint" id="submissionIdHint">
+              Uh oh! That doesn't look like the submission ID.
+              <a href="#" onclick="openWhereIsIdModal(); return false;">Where's my submission ID?</a>
+            </p>
+          </div>
+
+          <div class="panel-actions">
+            <button class="success-button" id="submitClaimBtn" onclick="submitMyClaim()" disabled>Submit</button>
+            <button class="danger-button" onclick="releaseMyClaim()">Release</button>
+          </div>
+        `;
+
+        // Set the initial disabled state (empty field is invalid).
+        onSubmissionIdInput();
+      }
+
+      function onSubmissionIdInput() {
+        const input = document.getElementById("snorkelSubmissionId");
+        const hint = document.getElementById("submissionIdHint");
+        const btn = document.getElementById("submitClaimBtn");
+        if (!input) return;
+
+        const val = input.value.trim();
+        const valid = isValidSubmissionId(val);
+
+        // Show the "uh oh" hint once they've typed something that isn't valid.
+        if (hint) hint.style.display = (val && !valid) ? "block" : "none";
+
+        // Button is only clickable when the ID is a valid UID.
+        if (btn) btn.disabled = !valid;
+      }
+
+      function openWhereIsIdModal() {
+        const modal = document.createElement("div");
+        modal.className = "modal-backdrop";
+        modal.onclick = function(event) {
+          if (event.target === modal) modal.remove();
+        };
+        modal.innerHTML = `
+          <div class="modal">
+            <button class="modal-close" onclick="this.closest('.modal-backdrop').remove()">×</button>
+            <h2>Where's my submission ID?</h2>
+            <div class="modal-section">
+              <p>The submission ID is at the <strong>top left of the task UI</strong> — it will say <strong>UID</strong>. Please use this ID.</p>
+            </div>
+            <div class="modal-section">
+              <img src="${SUBMISSION_ID_HELP_IMG}" alt="Screenshot showing the UID at the top left of the task submission UI" style="width: 100%; border: 1px solid var(--border); border-radius: 12px;">
+            </div>
+            <div class="modal-section">
+              <p>Need help finding it? <a href="${escapeAttr(SLACK_HELP_URL)}" target="_blank" rel="noopener noreferrer">Message us in Slack</a>.</p>
+            </div>
+            <div class="modal-footer">
+              <a class="primary-button" href="#" onclick="this.closest('.modal-backdrop').remove(); return false;">Got it</a>
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+      }
+
+      function renderSubmittedPanel() {
+        const panel = document.getElementById("submittedPanel");
+
+        if (!currentUser) {
+          panel.innerHTML = `
+            <h2>Your submitted tasks</h2>
+            <p>Sign in to see your submitted tasks.</p>
+          `;
+          return;
+        }
+
+        const submitted = getMySubmittedTasks();
+
+        if (!submitted.length) {
+          panel.innerHTML = `
+            <h2>Your submitted tasks</h2>
+            <p>No submitted tasks yet.</p>
+          `;
+          return;
+        }
+
+        panel.innerHTML = `
+          <h2>Your submitted tasks</h2>
+          ${submitted.slice(0, 10).map(task => `
+            <div class="list-item">
+              <div class="list-title">#${escapeHtml(task.task_id)} — ${escapeHtml(task.paper_title)}</div>
+              <div class="muted">Status: ${escapeHtml(task.status)}</div>
+              <div class="muted">Submitted: ${formatDate(task.active_claim_submitted_at)}</div>
+              <div class="muted">Snorkel Submission ID: ${escapeHtml(task.active_claim_submission_id || "")}</div>
+            </div>
+          `).join("")}
+        `;
+      }
+
+      let currentTab = "browse";
+
+      function switchTab(tab) {
+        currentTab = tab;
+        document.getElementById("browseTab").style.display = tab === "browse" ? "" : "none";
+        document.getElementById("metricsTab").style.display = tab === "metrics" ? "block" : "none";
+        document.getElementById("adminTab").style.display = tab === "admin" ? "block" : "none";
+        document.getElementById("tabButtonBrowse").classList.toggle("active", tab === "browse");
+        document.getElementById("tabButtonMetrics").classList.toggle("active", tab === "metrics");
+        document.getElementById("tabButtonAdmin").classList.toggle("active", tab === "admin");
+
+        if (tab === "metrics") renderMetricsPanel();
+      }
+
+      let adminEditMode = false;
+      const adminSelected = new Set();
+
+      function toggleAdminEditMode() {
+        adminEditMode = !adminEditMode;
+        if (!adminEditMode) adminSelected.clear();
+        renderAdminPanel();
+      }
+
+      function toggleAdminSelected(claimId, checked) {
+        if (checked) {
+          adminSelected.add(claimId);
+        } else {
+          adminSelected.delete(claimId);
+        }
+        // Update just the count label without a full re-render (keeps checkboxes responsive).
+        const countEl = document.getElementById("bulkSelectedCount");
+        if (countEl) countEl.textContent = String(adminSelected.size);
+      }
+
+      function renderQueueItem(task, opts) {
+        const showGradeLater = opts && opts.showGradeLater;
+        const checkbox = adminEditMode
+          ? `<label style="display:flex;align-items:center;gap:8px;margin-bottom:8px;font-weight:700;cursor:pointer;">
+               <input type="checkbox" style="width:auto;" ${adminSelected.has(task.active_claim_id) ? "checked" : ""}
+                 onchange="toggleAdminSelected('${escapeAttr(String(task.active_claim_id))}', this.checked)">
+               Select
+             </label>`
+          : "";
+
+        const perItemActions = adminEditMode
+          ? ""
+          : `<div class="panel-actions">
+               <button class="copy-button" onclick="copyIdeaToClipboard('${escapeAttr(String(task.task_id))}')">Copy idea</button>
+               <button class="success-button" onclick="approveTask('${escapeAttr(String(task.task_id))}')">Accept</button>
+               ${showGradeLater ? `<button class="neutral-button" onclick="markUngradeable('${escapeAttr(String(task.task_id))}')">Grade later</button>` : ""}
+               <button class="warning-button" onclick="undoSubmittedOrApprovedTask('${escapeAttr(String(task.task_id))}')">Undo submission</button>
+             </div>`;
+
+        return `
+          <div class="list-item">
+            ${checkbox}
+            <div class="list-title">#${escapeHtml(task.task_id)} — ${escapeHtml(task.paper_title)}</div>
+            <div class="muted">Submitted by: ${escapeHtml(task.active_claim_email || "")}</div>
+            <div class="muted">Submitted at: ${formatDate(task.active_claim_submitted_at)}</div>
+            <div class="muted">Snorkel Submission ID: ${escapeHtml(task.active_claim_submission_id || "")}</div>
+            ${perItemActions}
+          </div>
+        `;
+      }
+
+      function renderAdminPanel() {
+        const tabButton = document.getElementById("tabButtonAdmin");
+        const panel = document.getElementById("adminTab");
+
+        const metricsButton = document.getElementById("tabButtonMetrics");
+
+        if (!isAdmin()) {
+          tabButton.style.display = "none";
+          metricsButton.style.display = "none";
+          panel.innerHTML = "";
+          document.getElementById("metricsTab").innerHTML = "";
+          adminEditMode = false;
+          adminSelected.clear();
+          if (currentTab === "admin" || currentTab === "metrics") {
+            switchTab("browse");
+          }
+          return;
+        }
+
+        tabButton.style.display = "inline-block";
+        metricsButton.style.display = "inline-block";
+        renderMetricsPanel();
+
+        if (currentTab === "admin") {
+          panel.style.display = "block";
+        }
+        const queue = getAdminReviewQueue();
+        const ungradeable = getAdminUngradeableQueue();
+
+        // Drop any selected ids that are no longer in either queue (e.g. after a reload).
+        const liveIds = new Set([...queue, ...ungradeable].map(t => t.active_claim_id));
+        [...adminSelected].forEach(id => { if (!liveIds.has(id)) adminSelected.delete(id); });
+
+        const bulkBar = adminEditMode ? `
+          <div class="panel" style="margin-top:14px;background:var(--soft);">
+            <strong>Bulk actions</strong> — <span id="bulkSelectedCount">${adminSelected.size}</span> selected
+            <div class="panel-actions">
+              <button class="success-button" onclick="bulkAction('accept')">Accept selected</button>
+              <button class="neutral-button" onclick="bulkAction('ungradeable')">Grade later selected</button>
+              <button class="warning-button" onclick="bulkAction('undo')">Undo submission selected</button>
+              <button class="link-button" onclick="toggleAdminEditMode()">Done</button>
+            </div>
+            <p class="muted" style="margin-top:8px;">"Grade later" only applies to items in the review queue. Items already in "Unable to grade" will be skipped for that action.</p>
+          </div>
+        ` : "";
+
+        panel.innerHTML = `
+          <h2>Admin tools</h2>
+          <p>Use these tools carefully. Clear expired claims only affects claims past the 24-hour window.</p>
+          <div class="panel-actions">
+            <button class="primary-button" onclick="openAddTaskModal()">Add task</button>
+            <button class="warning-button" onclick="clearExpiredClaims()">Clear expired claims</button>
+            <button class="${adminEditMode ? "primary-button" : "neutral-button"}" onclick="toggleAdminEditMode()">${adminEditMode ? "Exit edit mode" : "Edit"}</button>
+          </div>
+
+          ${bulkBar}
+
+          <div class="queue-columns">
+            <div>
+              <h2>Admin review queue</h2>
+              ${queue.length ? `
+                <p>Approve if the example was used. Reopen if it should return to the available pool. Send to "Unable to grade" if it needs more investigation.</p>
+                ${queue.map(task => renderQueueItem(task, { showGradeLater: true })).join("")}
+              ` : `
+                <p>No submitted tasks are waiting for review.</p>
+              `}
+            </div>
+
+            <div>
+              <h2>Unable to grade</h2>
+              <p>These need a little extra investigation — e.g. broken IDs or those pending eval. They are set aside here to audit later and are not included in the counts above.</p>
+              ${ungradeable.length ? `
+                ${ungradeable.map(task => renderQueueItem(task, { showGradeLater: false })).join("")}
+              ` : `
+                <p>Nothing set aside for later.</p>
+              `}
+            </div>
+          </div>
+        `;
+      }
+
+      // Multi-select filters. Within a group the conditions are OR'd
+      // (Available OR Claimed); across groups they are AND'd (status AND domain).
+      // An empty group means "no constraint".
+      const STATUS_OPTIONS = ["My Claims", "Available", "Claimed", "Submitted", "Approved", "Blocked"];
+      const selectedStatuses = new Set();
+      const selectedDomains = new Set();
+      let openFilterMenu = null;
+
+      function filterGroup(group) {
+        return group === "status" ? selectedStatuses : selectedDomains;
+      }
+
+      function domainOptions() {
+        const seeded = TASKS.map(task => String(task.domain || "").trim()).filter(Boolean);
+        return [...new Set([...MOJAVE_DOMAINS, ...seeded])].sort();
+      }
+
+      function triggerLabel(group) {
+        const set = filterGroup(group);
+        if (!set.size) return "All";
+        if (set.size === 1) return [...set][0];
+        return `${set.size} selected`;
+      }
+
+      function toggleFilterMenu(group, event) {
+        if (event) event.stopPropagation();
+        openFilterMenu = openFilterMenu === group ? null : group;
+        renderFilterMenus();
+      }
+
+      function toggleFilterValue(group, value, event) {
+        if (event) event.stopPropagation();
+        const set = filterGroup(group);
+        if (set.has(value)) set.delete(value);
+        else set.add(value);
+        renderTaskList();
+      }
+
+      // Chips live outside the menus, so ticking one there should not leave a menu open.
+      function toggleFilterValueFromChip(group, value, event) {
+        openFilterMenu = null;
+        toggleFilterValue(group, value, event);
+      }
+
+      function clearFilterGroup(group, event) {
+        if (event) event.stopPropagation();
+        filterGroup(group).clear();
+        renderTaskList();
+      }
+
+      function clearAllFilters() {
+        selectedStatuses.clear();
+        selectedDomains.clear();
+        renderTaskList();
+      }
+
+      function renderFilterMenus() {
+        [["status", STATUS_OPTIONS], ["domain", domainOptions()]].forEach(([group, options]) => {
+          const set = filterGroup(group);
+          const menu = document.getElementById(group + "Menu");
+          const label = document.getElementById(group + "TriggerLabel");
+
+          if (label) label.textContent = triggerLabel(group);
+          if (!menu) return;
+
+          const isOpen = openFilterMenu === group;
+          menu.hidden = !isOpen;
+
+          const part = menu.closest(".filter-part");
+          if (part) part.classList.toggle("is-open", isOpen);
+
+          menu.innerHTML = `
+            <div class="filter-menu-list">
+              ${options.map(option => `
+                <button class="filter-option ${set.has(option) ? "is-on" : ""}" onclick="toggleFilterValue('${escapeAttr(group)}', '${escapeAttr(option)}', event)">
+                  <span class="box">&#10003;</span>
+                  <span class="text">${escapeHtml(option)}</span>
+                </button>
+              `).join("")}
+            </div>
+            <div class="filter-menu-footer">
+              <button onclick="clearFilterGroup('${escapeAttr(group)}', event)">Clear</button>
+              <button onclick="toggleFilterMenu('${escapeAttr(group)}', event)">Done</button>
+            </div>
+          `;
+        });
+      }
+
+      function renderActiveFilters() {
+        const el = document.getElementById("activeFilters");
+        if (!el) return;
+
+        const chips = [
+          ...[...selectedStatuses].map(value => ({ group: "status", value })),
+          ...[...selectedDomains].map(value => ({ group: "domain", value }))
+        ];
+
+        if (!chips.length) {
+          el.innerHTML = "";
+          return;
+        }
+
+        el.innerHTML = `
+          ${chips.map(chip => `
+            <button class="filter-chip" onclick="toggleFilterValueFromChip('${escapeAttr(chip.group)}', '${escapeAttr(chip.value)}', event)">
+              ${escapeHtml(chip.value)} <span class="x">&times;</span>
+            </button>
+          `).join("")}
+          <button class="filter-chip" onclick="clearAllFilters()">Clear all</button>
+        `;
+      }
+
+      document.addEventListener("click", function () {
+        if (openFilterMenu) {
+          openFilterMenu = null;
+          renderFilterMenus();
+        }
+      });
+
+      function matchesStatusFilter(task) {
+        if (!selectedStatuses.size) return true;
+
+        return [...selectedStatuses].some(status => {
+          if (status === "My Claims") return Boolean(task.active_claim_owned_by_me);
+          return effectiveStatus(task) === status;
+        });
+      }
+
+      function renderTaskList() {
+        const q = document.getElementById("search").value.toLowerCase();
+
+        renderFilterMenus();
+        renderActiveFilters();
+
+        const tasks = TASKS.filter(task => {
+          const blob = [
+            task.task_id,
+            task.domain,
+            task.subdomain,
+            task.compute_type,
+            task.paper_title,
+            task.venue_year,
+            task.priority,
+            task.task_concept,
+            task.active_claim_email
+          ].join(" ").toLowerCase();
+
+          const matchesText = !q || blob.includes(q);
+          const matchesDomain = !selectedDomains.size || selectedDomains.has(String(task.domain || "").trim());
+
+          return matchesText && matchesStatusFilter(task) && matchesDomain;
+        });
+
+        document.getElementById("visibleCount").textContent = tasks.length;
+
+        const filterCount = selectedStatuses.size + selectedDomains.size;
+        document.getElementById("sectionTitle").textContent =
+          filterCount === 0
+            ? "All Mojave Task Ideas"
+            : filterCount === 1
+              ? `${[...selectedStatuses, ...selectedDomains][0]} Mojave Task Ideas`
+              : "Filtered Mojave Task Ideas";
+
+        const taskList = document.getElementById("taskList");
+
+        if (!tasks.length) {
+          taskList.innerHTML = '<div class="empty">No matching tasks.</div>';
+          return;
+        }
+
+        taskList.innerHTML = `
+          <div class="task-grid">
+            ${tasks.map(task => {
+              const isHistorical = isHistoricalTask(task);
+              const isLocked = isLockedTask(task);
+              const canViewDetails = !isLocked && (!isHistorical || isAdmin() || task.active_claim_owned_by_me);
+
+              return `
+              <article class="task ${isHistorical ? "task-historical" : ""} ${isLocked ? "task-locked" : ""}">
+                <div class="eyebrow">
+                  <span class="pill ${escapeHtml(effectiveStatus(task))}">${escapeHtml(effectiveStatus(task))}</span>
+                  <span class="pill">${escapeHtml(task.domain || "")}</span>
+                  <span class="pill">${escapeHtml(task.subdomain || "")}</span>
+                  ${task.compute_type ? `<span class="pill">${escapeHtml(task.compute_type)}</span>` : ""}
+                </div>
+
+                <h3 class="task-title">${escapeHtml(task.paper_title)}</h3>
+                <p class="task-id">#${escapeHtml(task.task_id)}${task.venue_year ? " · " + escapeHtml(task.venue_year) : ""}</p>
+
+                <p class="preview">${escapeHtml(shorten(task.task_concept || "", 96))}</p>
+
+                ${isLocked ? `
+                  <p class="lock-note">&#128274; ${escapeHtml(effectiveStatus(task))} by another contributor</p>
+                ` : ""}
+
+                ${task.status !== "Available" && isAdmin() && claimStatusActorEmail(task) ? `
+                  <p class="muted">${escapeHtml(task.status)} by ${escapeHtml(claimStatusActorEmail(task))}</p>
+                ` : ""}
+
+                <div class="task-footer">
+                  ${canViewDetails
+                    ? `<a class="link-button" href="#" onclick="openTaskDetails('${escapeAttr(String(task.task_id))}'); return false;">View details</a>`
+                    : `<span class="link-button disabled" title="Details are hidden while another contributor holds this idea">View details</span>`
+                  }
+                  ${renderTaskAction(task)}
+                </div>
+              </article>
+            `;
+            }).join("")}
+          </div>
+        `;
+      }
+
+      function renderTaskAction(task) {
+        const actions = [];
+
+        if (!WORKFLOW_A_CLOSED && task.status === "Available" && (!isRetiredTask(task) || isAdmin())) {
+          actions.push(`<a class="primary-button" href="#" onclick="claimTask('${escapeAttr(String(task.task_id))}'); return false;">Claim task</a>`);
+        }
+
+        if (task.active_claim_owned_by_me && task.status === "Claimed") {
+          actions.push(`<a class="danger-button" href="#" onclick="releaseMyClaim(); return false;">Release</a>`);
+        }
+
+        if (task.active_claim_owned_by_me && task.status === "Submitted") {
+          actions.push(`<span class="pill Submitted">Waiting for review</span>`);
+        }
+
+        if (isAdmin() && ["Submitted", "Approved", "Ungradeable"].includes(task.status)) {
+          actions.push(`<a class="warning-button" href="#" onclick="undoSubmittedOrApprovedTask('${escapeAttr(String(task.task_id))}'); return false;">Undo submission</a>`);
+        }
+
+        return actions.join("");
+      }
+
+      function openContributorGuideModal() {
+        const modal = document.createElement("div");
+        modal.className = "modal-backdrop";
+
+        modal.onclick = function(event) {
+          if (event.target === modal) {
+            modal.remove();
+          }
+        };
+
+        modal.innerHTML = `
+          <div class="modal">
+            <button class="modal-close" onclick="this.closest('.modal-backdrop').remove()">×</button>
+
+            <h2>How to claim and submit a task</h2>
+            <p class="muted">Use this dashboard to claim one Mojave task idea at a time, then submit your completed work. An idea is a direction, not a draft — everything you submit must be your own work, written without any AI assistance.</p>
+
+            <div class="modal-section">
+              <h3>1. Sign in</h3>
+              <p>Click <strong>Sign in with GitHub</strong>. You need to be signed in before you can claim or submit a task.</p>
+            </div>
+
+            <div class="modal-section">
+              <h3>2. Find a task</h3>
+              <p>Browse the task cards, or use search and the status filter to find an available task.</p>
+            </div>
+
+            <div class="modal-section">
+              <h3>3. Review the details</h3>
+              <p>Click <strong>View details</strong> to read the idea, the suggested angles, and the submission reminders.</p>
+            </div>
+
+            <div class="modal-section">
+              <h3>4. Claim the task</h3>
+              <p>Click <strong>Claim task</strong>. You may only have one active claim at a time. Claims expire after 24 hours if they are not submitted.</p>
+            </div>
+
+            <div class="modal-section">
+              <h3>5. Submit your work</h3>
+              <p>After completing the task, return to the dashboard, paste your <strong>Snorkel Submission ID</strong> into the active claim panel, and click <strong>Submit</strong>. The submission ID is at the top left of the task UI and will say <strong>UID</strong>.</p>
+            </div>
+
+            <div class="modal-section">
+              <h3>Need to stop?</h3>
+              <p>Click <strong>Release</strong> on your active claim so someone else can claim the task.</p>
+            </div>
+
+            <div class="modal-footer">
+              <a class="primary-button" href="#" onclick="this.closest('.modal-backdrop').remove(); return false;">Got it</a>
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(modal);
+      }
+
+      function openTaskDetails(taskId) {
+        const task = TASKS.find(t => String(t.task_id) === String(taskId));
+
+        if (!task) {
+          showError("Could not find task #" + taskId);
+          return;
+        }
+
+        if (isLockedTask(task)) {
+          showError("Details are hidden while another contributor holds this idea.");
+          return;
+        }
+
+        const sourcesHtml = Array.isArray(task.sources) && task.sources.length
+          ? task.sources.map((source, index) => `
+              <a class="primary-button" href="${escapeAttr(source)}" target="_blank" rel="noopener noreferrer">Source ${index + 1}</a>
+            `).join("")
+          : "<p>No sources listed.</p>";
+
+        const modal = document.createElement("div");
+        modal.className = "modal-backdrop";
+
+        modal.onclick = function(event) {
+          if (event.target === modal) {
+            modal.remove();
+          }
+        };
+
+        modal.innerHTML = `
+          <div class="modal">
+            <button class="modal-close" onclick="this.closest('.modal-backdrop').remove()">×</button>
+
+            <div class="eyebrow">
+              <span class="pill">${escapeHtml(task.domain || "")}</span>
+              <span class="pill">${escapeHtml(task.subdomain || "")}</span>
+            </div>
+
+            <h2>${escapeHtml(task.paper_title)}</h2>
+            <p class="task-id">#${escapeHtml(task.task_id)}${task.venue_year ? " · " + escapeHtml(task.venue_year) : ""}</p>
+
+            <div class="eyebrow">
+              <span class="pill ${escapeHtml(effectiveStatus(task))}">${escapeHtml(effectiveStatus(task))}</span>
+              <span class="pill">Priority: ${escapeHtml(task.priority || "")}</span>
+              ${task.compute_type ? `<span class="pill">Compute: ${escapeHtml(task.compute_type)}</span>` : ""}
+            </div>
+
+            <div class="modal-section">
+              <p>${escapeHtml(task.task_concept || "No idea text listed.")}</p>
+            </div>
+
+            <div class="modal-section">
+              <h3>Suggested Angles</h3>
+              <pre>${escapeHtml(task.suggested_harbor_steps || "No suggested angles listed.")}</pre>
+            </div>
+
+            <div class="modal-section">
+              <h3>Before You Submit</h3>
+              <p>${escapeHtml(task.verifier_ideas || "No reminders listed.")}</p>
+            </div>
+
+            <div class="modal-section">
+              <h3>Sources</h3>
+              <div>${sourcesHtml}</div>
+            </div>
+
+            ${effectiveStatus(task) !== "Available" ? `
+              <div class="modal-section">
+                <h3>Claim Status</h3>
+                <p>${escapeHtml(effectiveStatus(task))}${isAdmin() && claimStatusActorEmail(task) ? " by " + escapeHtml(claimStatusActorEmail(task)) : ""}</p>
+              </div>
+            ` : ""}
+
+            <div class="modal-footer">
+              <a class="link-button" href="#" onclick="this.closest('.modal-backdrop').remove(); return false;">Cancel</a>
+              ${renderTaskAction(task)}
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(modal);
+      }
+
+      async function claimTask(taskId) {
+        clearMessage();
+        clearError();
+
+        const task = TASKS.find(t => String(t.task_id) === String(taskId));
+
+        if (!task) {
+          showError("Could not find task #" + taskId);
+          return;
+        }
+
+        if (WORKFLOW_A_CLOSED) {
+          showError(WORKFLOW_A_CLOSED_MESSAGE);
+          return;
+        }
+
+        if (!currentUser) {
+          await signInWithGitHub();
+          return;
+        }
+
+        const myActiveClaim = getMyActiveClaim();
+
+        if (myActiveClaim) {
+          showError("You already have an active claim. Submit or release it before claiming another task.");
+          return;
+        }
+
+        if (task.status !== "Available") {
+          showError("This task is not available.");
+          return;
+        }
+
+        if (isRetiredTask(task) && !isAdmin()) {
+          showError("This task has been retired and is no longer available to claim.");
+          return;
+        }
+
+        const now = new Date();
+        const expiresAt = new Date(now.getTime() + CLAIM_TTL_HOURS * 60 * 60 * 1000);
+
+        const { error } = await supabaseClient
+          .from("harbor_selected_tasks")
+          .insert({
+            task_id: task.id,
+            user_id: currentUser.id,
+            user_email: currentUser.email || null,
+            status: "claimed",
+            selected_at: now.toISOString(),
+            expires_at: expiresAt.toISOString()
+          });
+
+        if (error) {
+          console.error(error);
+          showError("Could not claim this task. It may already be claimed, or you may already have an active claim.");
+          return;
+        }
+
+        showMessage("Task claimed.");
+        await loadTasks();
+      }
+
+      async function releaseMyClaim() {
+        clearMessage();
+        clearError();
+
+        if (!currentUser) {
+          await signInWithGitHub();
+          return;
+        }
+
+        const claim = getMyActiveClaim();
+
+        if (!claim || !claim.active_claim_id) {
+          showError("You do not have an active claim.");
+          return;
+        }
+
+        const { error } = await supabaseClient
+          .from("harbor_selected_tasks")
+          .update({
+            status: "abandoned",
+            expires_at: null,
+            notes: "Released by contributor"
+          })
+          .eq("id", claim.active_claim_id)
+          .eq("user_id", currentUser.id);
+
+        if (error) {
+          console.error(error);
+          showError("Could not release your claim.");
+          return;
+        }
+
+        showMessage("Claim released.");
+        await loadTasks();
+      }
+
+      async function submitMyClaim() {
+        clearMessage();
+        clearError();
+
+        if (!currentUser) {
+          await signInWithGitHub();
+          return;
+        }
+
+        const claim = getMyActiveClaim();
+
+        if (!claim || !claim.active_claim_id) {
+          showError("You do not have an active claim to submit.");
+          return;
+        }
+
+        const submissionInput = document.getElementById("snorkelSubmissionId");
+        const submissionId = normalizeSubmissionId(submissionInput?.value);
+
+        if (!submissionId) {
+          showError("Snorkel Submission ID is required.");
+          return;
+        }
+
+        // Hard block: a malformed ID cannot be submitted.
+        if (!isValidSubmissionId(submissionId)) {
+          const hint = document.getElementById("submissionIdHint");
+          if (hint) hint.style.display = "block";
+          showError(
+            "That doesn't look like a valid Snorkel submission ID. It should be the UID " +
+            "from the top left of the task UI, e.g. beb0150b-a18b-4735-90b7-3a1e1086669d."
+          );
+          return;
+        }
+
+        const now = new Date().toISOString();
+
+        const { error } = await supabaseClient
+          .from("harbor_selected_tasks")
+          .update({
+            status: "submitted",
+            snorkel_submission_id: submissionId,
+            submitted_for_review_at: now,
+            expires_at: null
+          })
+          .eq("id", claim.active_claim_id)
+          .eq("user_id", currentUser.id);
+
+        if (error) {
+          console.error(error);
+          showError("Could not submit your claim.");
+          return;
+        }
+
+        showMessage("Task submitted for review.");
+        await loadTasks();
+      }
+
+      async function approveTask(taskId) {
+        clearMessage();
+        clearError();
+
+        if (!isAdmin()) {
+          showError("You do not have permission to approve tasks.");
+          return;
+        }
+
+        const task = TASKS.find(t => String(t.task_id) === String(taskId));
+
+        if (!task || !["Submitted", "Ungradeable"].includes(task.status)) {
+          showError("This task is not currently awaiting review.");
+          return;
+        }
+
+        const now = new Date().toISOString();
+
+        const { error } = await supabaseClient
+          .from("harbor_selected_tasks")
+          .update({
+            status: "approved",
+            completed_at: now,
+            reviewed_at: now,
+            reviewed_by: currentUser.id,
+            admin_email: currentUser.email || null
+          })
+          .eq("id", task.active_claim_id);
+
+        if (error) {
+          console.error(error);
+          showError("Could not approve this task.");
+          return;
+        }
+
+        showMessage("Task accepted.");
+        await loadTasks();
+      }
+
+      async function markUngradeable(taskId) {
+        clearMessage();
+        clearError();
+
+        if (!isAdmin()) {
+          showError("You do not have permission to do this.");
+          return;
+        }
+
+        const task = TASKS.find(t => String(t.task_id) === String(taskId));
+
+        if (!task || task.status !== "Submitted") {
+          showError("This task is not currently submitted for review.");
+          return;
+        }
+
+        const now = new Date().toISOString();
+
+        const { error } = await supabaseClient
+          .from("harbor_selected_tasks")
+          .update({
+            status: "ungradeable",
+            reviewed_at: now,
+            reviewed_by: currentUser.id,
+            admin_email: currentUser.email || null,
+            notes: "Set aside as unable to grade (needs investigation)"
+          })
+          .eq("id", task.active_claim_id);
+
+        if (error) {
+          console.error(error);
+          showError("Could not move this to Unable to grade.");
+          return;
+        }
+
+        showMessage("Moved to Unable to grade.");
+        await loadTasks();
+      }
+
+      function buildIdeaText(task) {
+        const lines = [];
+
+        lines.push(`${task.paper_title || ""} (#${task.task_id})`);
+
+        const meta = [task.venue_year, task.domain, task.subdomain, task.compute_type].filter(Boolean).join(" · ");
+        if (meta) lines.push(meta);
+
+        if (task.active_claim_submission_id) {
+          lines.push(`Snorkel Submission ID: ${task.active_claim_submission_id}`);
+        }
+
+        lines.push("");
+        lines.push("The Idea:");
+        lines.push(task.task_concept || "(none)");
+
+        lines.push("");
+        lines.push("Suggested Angles:");
+        lines.push(task.suggested_harbor_steps || "(none)");
+
+        lines.push("");
+        lines.push("Before You Submit:");
+        lines.push(task.verifier_ideas || "(none)");
+
+        if (Array.isArray(task.sources) && task.sources.length) {
+          lines.push("");
+          lines.push("Sources:");
+          task.sources.forEach(source => lines.push(source));
+        }
+
+        return lines.join("\n");
+      }
+
+      async function copyIdeaToClipboard(taskId) {
+        clearMessage();
+        clearError();
+
+        if (!isAdmin()) {
+          showError("You do not have permission to copy this idea.");
+          return;
+        }
+
+        const task = TASKS.find(t => String(t.task_id) === String(taskId));
+
+        if (!task) {
+          showError("Could not find task #" + taskId);
+          return;
+        }
+
+        const text = buildIdeaText(task);
+
+        try {
+          await navigator.clipboard.writeText(text);
+          showMessage("Idea copied to clipboard.");
+        } catch (err) {
+          console.error(err);
+          showError("Could not copy idea to clipboard. Your browser may be blocking clipboard access.");
+        }
+      }
+
+      async function undoSubmittedOrApprovedTask(taskId) {
+        clearMessage();
+        clearError();
+
+        if (!isAdmin()) {
+          showError("You do not have permission to undo submissions.");
+          return;
+        }
+
+        const task = TASKS.find(t => String(t.task_id) === String(taskId));
+
+        if (!task || !["Submitted", "Approved", "Ungradeable"].includes(task.status)) {
+          showError("This task is not currently submitted, approved, or set aside.");
+          return;
+        }
+
+        const warning = "Warning: this will undo an accepted/submitted task and return it to the available pool. Only continue if the submission was accepted by mistake or needs to be reassigned.";
+
+        if (!window.confirm(warning)) {
+          return;
+        }
+
+        const now = new Date().toISOString();
+
+        const { error } = await supabaseClient
+          .from("harbor_selected_tasks")
+          .update({
+            status: "reopened",
+            reviewed_at: now,
+            reviewed_by: currentUser.id,
+            admin_email: currentUser.email || null,
+            expires_at: null,
+            notes: "Submission/approval undone by admin"
+          })
+          .eq("id", task.active_claim_id);
+
+        if (error) {
+          console.error(error);
+          showError("Could not undo this submission.");
+          return;
+        }
+
+        showMessage("Submission undone. Task returned to available pool.");
+        await loadTasks();
+      }
+
+      async function bulkAction(action) {
+        clearMessage();
+        clearError();
+
+        if (!isAdmin()) {
+          showError("You do not have permission to do this.");
+          return;
+        }
+
+        // Resolve the selected claim IDs to their current tasks.
+        const selectedTasks = TASKS.filter(t => t.active_claim_id && adminSelected.has(t.active_claim_id));
+
+        if (!selectedTasks.length) {
+          showError("No items selected. Tick the checkboxes next to the tasks you want to act on.");
+          return;
+        }
+
+        const now = new Date().toISOString();
+        let update;
+        let eligible;
+        let verb;
+
+        if (action === "accept") {
+          eligible = selectedTasks.filter(t => ["Submitted", "Ungradeable"].includes(t.status));
+          update = { status: "approved", completed_at: now, reviewed_at: now, reviewed_by: currentUser.id, admin_email: currentUser.email || null };
+          verb = "accepted";
+        } else if (action === "ungradeable") {
+          // Grade later only makes sense for items still in the review queue.
+          eligible = selectedTasks.filter(t => t.status === "Submitted");
+          update = { status: "ungradeable", reviewed_at: now, reviewed_by: currentUser.id, admin_email: currentUser.email || null, notes: "Set aside as unable to grade (needs investigation)" };
+          verb = "moved to Unable to grade";
+        } else if (action === "undo") {
+          eligible = selectedTasks.filter(t => ["Submitted", "Approved", "Ungradeable"].includes(t.status));
+          update = { status: "reopened", reviewed_at: now, reviewed_by: currentUser.id, admin_email: currentUser.email || null, expires_at: null, notes: "Submission/approval undone by admin" };
+          verb = "undone and returned to the available pool";
+        } else {
+          showError("Unknown bulk action.");
+          return;
+        }
+
+        if (!eligible.length) {
+          showError("None of the selected items are eligible for that action.");
+          return;
+        }
+
+        const skipped = selectedTasks.length - eligible.length;
+        const confirmMsg =
+          `This will bulk-${action === "undo" ? "undo" : action === "accept" ? "accept" : "grade-later"} ${eligible.length} item(s)` +
+          (skipped ? ` (${skipped} selected item(s) will be skipped as not eligible)` : "") +
+          `.\n\nContinue?`;
+
+        if (!window.confirm(confirmMsg)) {
+          return;
+        }
+
+        const ids = eligible.map(t => t.active_claim_id);
+
+        // One update call covering all eligible rows.
+        const { error } = await supabaseClient
+          .from("harbor_selected_tasks")
+          .update(update)
+          .in("id", ids);
+
+        if (error) {
+          console.error(error);
+          showError("Could not complete the bulk action. No changes may have been applied — please refresh and check.");
+          return;
+        }
+
+        adminSelected.clear();
+        adminEditMode = false;
+        showMessage(`${eligible.length} item(s) ${verb}.`);
+        await loadTasks();
+      }
+
+      async function clearExpiredClaims() {
+        clearMessage();
+        clearError();
+
+        if (!isAdmin()) {
+          showError("You do not have permission to clear expired claims.");
+          return;
+        }
+
+        const { data, error } = await supabaseClient.rpc("clear_expired_harbor_claims");
+
+        if (error) {
+          console.error(error);
+          showError("Could not clear expired claims.");
+          return;
+        }
+
+        const count = Number(data || 0);
+        showMessage(`${count} expired claim(s) cleared.`);
+        await loadTasks();
+      }
+
+      function openAddTaskModal() {
+        if (!isAdmin()) {
+          showError("You do not have permission to add tasks.");
+          return;
+        }
+
+        const modal = document.createElement("div");
+        modal.className = "modal-backdrop";
+
+        modal.onclick = function(event) {
+          if (event.target === modal) {
+            modal.remove();
+          }
+        };
+
+        modal.innerHTML = `
+          <div class="modal">
+            <button class="modal-close" onclick="this.closest('.modal-backdrop').remove()">×</button>
+
+            <h2>Add task idea</h2>
+            <p class="muted">This adds or updates one Mojave task idea by Display ID. It does not touch claims, submissions, or approvals.</p>
+
+            <div class="modal-section">
+              <h3>Display ID</h3>
+              <input id="newTaskDisplayId" placeholder="6">
+            </div>
+
+            <div class="modal-section">
+              <h3>Priority</h3>
+              <input id="newTaskPriority" placeholder="Candidate">
+            </div>
+
+            <div class="modal-section">
+              <h3>Compute Type</h3>
+              <select id="newTaskComputeType">
+                <option value="GPU">GPU</option>
+                <option value="CPU">CPU</option>
+              </select>
+            </div>
+
+            <div class="modal-section">
+              <h3>Topic</h3>
+              <select id="newTaskDomain" onchange="syncSubdomainOptions()">
+                ${MOJAVE_DOMAINS.map(domain => `<option value="${escapeAttr(domain)}">${escapeHtml(domain)}</option>`).join("")}
+              </select>
+            </div>
+
+            <div class="modal-section">
+              <h3>Subtopic</h3>
+              <select id="newTaskSubdomain"></select>
+              <p class="muted" style="margin-top:6px;">Only subtopics that belong to the selected topic are listed.</p>
+            </div>
+
+            <div class="modal-section">
+              <h3>Idea title</h3>
+              <input id="newTaskPaperTitle" placeholder="Idea title">
+            </div>
+
+            <div class="modal-section">
+              <h3>Venue / year</h3>
+              <input id="newTaskVenueYear" placeholder="Optional">
+            </div>
+
+            <div class="modal-section">
+              <h3>Sources</h3>
+              <textarea id="newTaskSources" placeholder="One URL per line"></textarea>
+            </div>
+
+            <div class="modal-section">
+              <h3>The idea</h3>
+              <textarea id="newTaskConcept" placeholder="Describe the direction in two or three sentences..."></textarea>
+            </div>
+
+            <div class="modal-section">
+              <h3>Suggested angles</h3>
+              <textarea id="newTaskSteps" placeholder="One loose angle per line"></textarea>
+            </div>
+
+            <div class="modal-section">
+              <h3>Before you submit</h3>
+              <textarea id="newTaskVerifierIdeas" placeholder="Reminders, semicolon separated"></textarea>
+            </div>
+
+            <div class="modal-footer">
+              <a class="link-button" href="#" onclick="this.closest('.modal-backdrop').remove(); return false;">Cancel</a>
+              <button class="primary-button" onclick="submitNewTask()">Add task idea</button>
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(modal);
+        syncSubdomainOptions();
+      }
+
+      function syncSubdomainOptions() {
+        const domainSelect = document.getElementById("newTaskDomain");
+        const subSelect = document.getElementById("newTaskSubdomain");
+        if (!domainSelect || !subSelect) return;
+
+        const options = subdomainsFor(domainSelect.value);
+        subSelect.innerHTML = options
+          .map(sub => `<option value="${escapeAttr(sub)}">${escapeHtml(sub)}</option>`)
+          .join("");
+      }
+
+      async function submitNewTask() {
+        clearMessage();
+        clearError();
+
+        if (!isAdmin()) {
+          showError("You do not have permission to add tasks.");
+          return;
+        }
+
+        const displayId = String(document.getElementById("newTaskDisplayId")?.value || "").trim();
+        const priority = String(document.getElementById("newTaskPriority")?.value || "").trim();
+        const computeType = String(document.getElementById("newTaskComputeType")?.value || "").trim();
+        const domain = String(document.getElementById("newTaskDomain")?.value || "").trim();
+        const subdomain = String(document.getElementById("newTaskSubdomain")?.value || "").trim();
+        const paperTitle = String(document.getElementById("newTaskPaperTitle")?.value || "").trim();
+        const venueYear = String(document.getElementById("newTaskVenueYear")?.value || "").trim();
+        const sourcesText = String(document.getElementById("newTaskSources")?.value || "").trim();
+        const taskConcept = String(document.getElementById("newTaskConcept")?.value || "").trim();
+        const suggestedSteps = String(document.getElementById("newTaskSteps")?.value || "").trim();
+        const verifierIdeas = String(document.getElementById("newTaskVerifierIdeas")?.value || "").trim();
+
+        if (!displayId) {
+          showError("Display ID is required.");
+          return;
+        }
+
+        if (!paperTitle) {
+          showError("Paper title is required.");
+          return;
+        }
+
+        if (!isValidDomainPair(domain, subdomain)) {
+          showError("That subtopic does not belong to the selected topic. Pick one from the list.");
+          return;
+        }
+
+        const existingTask = TASKS.find(task => String(task.task_id) === String(displayId));
+
+        if (existingTask) {
+          const ok = window.confirm("A task with this Display ID already exists. Continue to update it?");
+          if (!ok) return;
+        }
+
+        const sources = sourcesText
+          ? sourcesText
+              .split(/\n|,/)
+              .map(source => source.trim())
+              .filter(Boolean)
+          : [];
+
+        const { error } = await supabaseClient
+          .from("harbor_tasks")
+          .upsert({
+            display_id: displayId,
+            priority,
+            compute_type: computeType,
+            domain,
+            subdomain,
+            paper_title: paperTitle,
+            venue_year: venueYear,
+            sources,
+            task_concept: taskConcept,
+            suggested_harbor_steps: suggestedSteps,
+            verifier_ideas: verifierIdeas
+          }, {
+            onConflict: "display_id"
+          });
+
+        if (error) {
+          console.error(error);
+          showError("Could not add this task.");
+          return;
+        }
+
+        const modal = document.querySelector(".modal-backdrop");
+        if (modal) modal.remove();
+
+        showMessage(existingTask ? "Task updated." : "Task added.");
+        await loadTasks();
+      }
+
+      // Remember where the last click landed so a toast can appear next to it
+      // instead of interrupting in the middle of the screen.
+      let lastPointer = null;
+
+      document.addEventListener("click", function (event) {
+        if (event.clientX || event.clientY) {
+          lastPointer = { x: event.clientX, y: event.clientY };
+        }
+      }, true);
+
+      let toastEl = null;
+      let toastTimer = null;
+
+      function showToast(message, isError) {
+        if (!message) return;
+
+        if (!toastEl) {
+          toastEl = document.createElement("div");
+          toastEl.className = "toast";
+          document.body.appendChild(toastEl);
+        }
+
+        toastEl.textContent = message;
+        toastEl.classList.toggle("is-error", Boolean(isError));
+        toastEl.classList.remove("show");
+
+        // Measure, then place near the click, clamped inside the viewport.
+        toastEl.style.left = "0px";
+        toastEl.style.top = "0px";
+
+        const rect = toastEl.getBoundingClientRect();
+        const margin = 12;
+        const anchor = lastPointer || {
+          x: window.innerWidth - rect.width - margin,
+          y: window.innerHeight - rect.height - margin * 2
+        };
+
+        let left = anchor.x + 14;
+        let top = anchor.y + 16;
+
+        if (left + rect.width + margin > window.innerWidth) {
+          left = Math.max(margin, anchor.x - rect.width - 14);
+        }
+
+        if (top + rect.height + margin > window.innerHeight) {
+          top = Math.max(margin, anchor.y - rect.height - 16);
+        }
+
+        toastEl.style.left = Math.max(margin, left) + "px";
+        toastEl.style.top = Math.max(margin, top) + "px";
+
+        requestAnimationFrame(() => toastEl.classList.add("show"));
+
+        window.clearTimeout(toastTimer);
+        toastTimer = window.setTimeout(() => {
+          if (toastEl) toastEl.classList.remove("show");
+        }, isError ? 5200 : 2600);
+      }
+
+      function showMessage(message) {
+        const el = document.getElementById("message");
+        el.textContent = "";
+        el.style.display = "none";
+        showToast(message, false);
+      }
+
+      function showError(message) {
+        const el = document.getElementById("error");
+        el.textContent = "";
+        el.style.display = "none";
+        showToast(message, true);
+      }
+
+      function clearMessage() {
+        const el = document.getElementById("message");
+        el.textContent = "";
+        el.style.display = "none";
+      }
+
+      function clearError() {
+        const el = document.getElementById("error");
+        el.textContent = "";
+        el.style.display = "none";
+      }
+
+      function shorten(value, maxLength) {
+        const text = String(value || "");
+        if (text.length <= maxLength) return text;
+        return text.slice(0, maxLength).trim() + "...";
+      }
+
+      function formatDate(value) {
+        if (!value) return "";
+
+        const date = new Date(value);
+
+        if (isNaN(date.getTime())) return "";
+
+        return date.toLocaleString();
+      }
+
+      function escapeHtml(value) {
+        return String(value ?? "")
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      function escapeAttr(value) {
+        return escapeHtml(value).replace(/`/g, "&#096;");
+      }
+
+      function renderFloatingNotice() {
+        const el = document.getElementById("floatingNotice");
+        if (!el) return;
+
+        if (!WORKFLOW_A_CLOSED) {
+          el.innerHTML = "";
+          return;
+        }
+
+        el.innerHTML = `
+          <div class="floating-notice" role="status">
+            <button class="floating-notice-close" title="Dismiss" onclick="this.closest('.floating-notice').remove()">×</button>
+            <strong>Workflow A update</strong>
+            ${escapeHtml(WORKFLOW_A_CLOSED_MESSAGE)}
+          </div>
+        `;
+      }
+
+      function applyTheme(theme) {
+        document.body.dataset.theme = theme;
+        const btn = document.getElementById("themeToggle");
+        if (btn) btn.textContent = theme === "dark" ? "Light mode" : "Dark mode";
+      }
+
+      function toggleTheme() {
+        applyTheme(document.body.dataset.theme === "dark" ? "light" : "dark");
+      }
+
+      function initTheme() {
+        const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+        applyTheme(prefersDark ? "dark" : "light");
+      }
+
+      async function init() {
+        initTheme();
+        await loadSession();
+        await loadTasks();
+        renderFloatingNotice();
+      }
+
+      init();
+    </script>
+  </body>
+</html>
