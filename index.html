@@ -641,6 +641,60 @@
         font-size: 13px;
       }
 
+      .idea-id {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        font-family: inherit;
+      }
+
+      .idea-id-label {
+        font-family: var(--font, inherit);
+        font-weight: 700;
+        letter-spacing: 0.02em;
+      }
+
+      .idea-id code {
+        font-family: inherit;
+        letter-spacing: 0.01em;
+      }
+
+      .idea-id-trailing {
+        color: var(--muted);
+      }
+
+      .id-copy {
+        display: inline-grid;
+        place-items: center;
+        width: 22px;
+        height: 22px;
+        padding: 0;
+        border: 0;
+        border-radius: 6px;
+        background: transparent;
+        color: var(--muted);
+        cursor: pointer;
+      }
+
+      .id-copy:hover {
+        background: var(--soft);
+        color: var(--text);
+      }
+
+      .id-copy svg {
+        width: 13px;
+        height: 13px;
+        fill: none;
+        stroke: currentColor;
+        stroke-width: 2;
+        stroke-linecap: round;
+        stroke-linejoin: round;
+      }
+
+      .task-locked .id-copy {
+        display: none;
+      }
+
       .preview {
         margin: 0 0 12px;
         color: var(--muted);
@@ -1086,7 +1140,7 @@
 
         <div class="tab-bar">
           <button class="tab-button active" id="tabButtonBrowse" onclick="switchTab('browse')">Browse Tasks</button>
-          <button class="tab-button" id="tabButtonMetrics" onclick="switchTab('metrics')" style="display: none;">Domain metrics</button>
+          <button class="tab-button" id="tabButtonMetrics" onclick="switchTab('metrics')" style="display: none;">Domain Metrics</button>
           <button class="tab-button" id="tabButtonAdmin" onclick="switchTab('admin')" style="display: none;">Admin Tools</button>
         </div>
 
@@ -1162,11 +1216,28 @@
 
       const EXCLUDED_TASK_TITLES = new Set([]);
       const ADMIN_EMAILS = [
-        "tyler.davis@snorkel.ai",
-        "cairo.simpson@snorkel.ai",
-        "fernando.perezrivera@snorkel.ai",
+        "anastasia.kozlova@snorkel.ai",
+        "brittany.barthel@snorkel.ai",
+        "christian.arroyo@snorkel.ai",
+        "courtney.jeung@snorkel.ai",
+        "dan.nguyen@snorkel.ai",
+        "dhananjay.gavade@snorkel.ai",
+        "dillon.gallus@snorkel.ai",
+        "dmitiry.samsonov@snorkel.ai",
         "hao.nguyen@snorkel.ai",
-        "alyssa.billy@snorkel.ai"
+        "julia.szenderski@snorkel.ai",
+        "liam.glynn@snorkel.ai",
+        "louisa.savageaux@snorkel.ai",
+        "luis.torrealba@snorkel.ai",
+        "mary.johnson@snorkel.ai",
+        "michael.goland@snorkel.ai",
+        "patrick.dwyer@snorkel.ai",
+        "raphael.sanandres@snorkel.ai",
+        "ryan.cohen@snorkel.ai",
+        "sebastian.rojofernandez@snorkel.ai",
+        "tunni.chiang@snorkel.ai",
+        "tyler.davis@snorkel.ai",
+        "victor.flint@snorkel.ai"
       ];
 
       let TASKS = [];
@@ -1177,7 +1248,7 @@
         harbor_tasks: [
           {
                     "id": "idea-0001-4a1b-8c2d-000000000001",
-                    "display_id": "1",
+                    "display_id": "mjv-bhw3-8c6v",
                     "priority": "Candidate",
                     "compute_type": "",
                     "domain": "Sociology",
@@ -1187,11 +1258,12 @@
                     "sources": [],
                     "task_concept": "Describe a documented pattern in class reproduction or mobility that more than one tradition would claim, then ask which account it actually fits. The discriminating detail should be somewhere in the description.",
                     "suggested_harbor_steps": "Traditions that agree on the outcome but not on the mechanism.\nDo not name any theorist in the stem.",
-                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage."
+                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage.",
+                    "created_at": "2025-08-13T15:46:40Z"
           },
           {
                     "id": "idea-0002-4a1b-8c2d-000000000002",
-                    "display_id": "2",
+                    "display_id": "mjv-bk7c-6qsf",
                     "priority": "Candidate",
                     "compute_type": "",
                     "domain": "Sociology",
@@ -1201,11 +1273,12 @@
                     "sources": [],
                     "task_concept": "A family form that runs counter to what the standard account of the period would predict. Ask what best explains it, with the explanation turning on a condition stated in the scenario.",
                     "suggested_harbor_steps": "The exception is real and documented, not invented for effect.\nThe answer should not be reachable by naming the general trend.",
-                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage."
+                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage.",
+                    "created_at": "2025-08-13T16:46:40Z"
           },
           {
                     "id": "idea-0003-4a1b-8c2d-000000000003",
-                    "display_id": "3",
+                    "display_id": "mjv-32ke-w9tk",
                     "priority": "Candidate",
                     "compute_type": "",
                     "domain": "History",
@@ -1215,11 +1288,12 @@
                     "sources": [],
                     "task_concept": "Several plausible causes sit behind one outcome. Ask which one was most directly responsible, where the answer requires weighing them against each other rather than listing them.",
                     "suggested_harbor_steps": "Counterfactual framing works well here - what if one factor had been absent.\nAvoid anything a date alone would settle.",
-                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage."
+                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage.",
+                    "created_at": "2025-08-13T17:46:40Z"
           },
           {
                     "id": "idea-0004-4a1b-8c2d-000000000004",
-                    "display_id": "4",
+                    "display_id": "mjv-wpr8-qy9w",
                     "priority": "Candidate",
                     "compute_type": "",
                     "domain": "Anthropology",
@@ -1229,11 +1303,12 @@
                     "sources": [],
                     "task_concept": "Give a described assemblage - materials, context, associations - and ask which inference the evidence actually licenses. The trap is the interpretation that is popular but underdetermined by what is present.",
                     "suggested_harbor_steps": "Ask which conclusion is NOT supported.\nKeep every stated find real and plausible for the region and period.",
-                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage."
+                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage.",
+                    "created_at": "2025-08-13T18:46:40Z"
           },
           {
                     "id": "idea-0005-4a1b-8c2d-000000000005",
-                    "display_id": "5",
+                    "display_id": "mjv-3qk4-egqq",
                     "priority": "Candidate",
                     "compute_type": "",
                     "domain": "Iberian and Latin American Cultures",
@@ -1243,11 +1318,12 @@
                     "sources": [],
                     "task_concept": "Present a text, object, or practice alongside two interpretive frameworks that would read it differently, and ask which reading the described details support.",
                     "suggested_harbor_steps": "The details in the stem should settle it, not the reader's sympathies.\nNo theorist or school named in the stem.",
-                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage."
+                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage.",
+                    "created_at": "2025-08-13T19:46:40Z"
           },
           {
                     "id": "idea-0006-4a1b-8c2d-000000000006",
-                    "display_id": "6",
+                    "display_id": "mjv-19qk-90kj",
                     "priority": "Candidate",
                     "compute_type": "",
                     "domain": "Communication",
@@ -1257,11 +1333,12 @@
                     "sources": [],
                     "task_concept": "A reporting scenario where two professional norms pull in opposite directions. Ask what the standards actually require here, not what feels defensible.",
                     "suggested_harbor_steps": "Build it on codified, current standards, not on vibes about ethics.\nStrong distractors are the norms that almost apply.",
-                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage."
+                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage.",
+                    "created_at": "2025-08-13T20:46:40Z"
           },
           {
                     "id": "idea-0007-4a1b-8c2d-000000000007",
-                    "display_id": "7",
+                    "display_id": "mjv-6bz4-dw06",
                     "priority": "Candidate",
                     "compute_type": "",
                     "domain": "French, Italian, and German",
@@ -1271,7 +1348,8 @@
                     "sources": [],
                     "task_concept": "A passage or work whose effect depends on something structural - register, form, address - and ask what is lost or altered when that feature moves across languages or contexts.",
                     "suggested_harbor_steps": "Quoted source text may stay in the original; everything else in English.\nThe answer should turn on the formal feature, not on plot.",
-                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage."
+                    "verifier_ideas": "Graduate level and reasoning-based, not recall; self-contained with pen and paper; exactly one defensible correct answer; 10 real, distinct choices with no placeholders and no evenly spaced numeric ladder; 3-7 sentence rationale; your own authoritative citation in APA; no LLM use at any stage.",
+                    "created_at": "2025-08-13T21:46:40Z"
           }
 ],
         harbor_selected_tasks: []
@@ -1568,6 +1646,12 @@
           if (Number.isFinite(aId) && Number.isFinite(bId) && aId !== bId) {
             return aId - bId;
           }
+
+          // Idea keys are random by design, so oldest-first is the useful order.
+          const aAt = String(a.created_at || "");
+          const bAt = String(b.created_at || "");
+          if (aAt && bAt && aAt !== bAt) return aAt < bAt ? -1 : 1;
+
           return String(a.task_id).localeCompare(String(b.task_id));
         });
 
@@ -1597,6 +1681,41 @@
           task.active_claim_owned_by_me &&
           ["Submitted", "Approved", "Ungradeable"].includes(task.status)
         );
+      }
+
+      // ---- Idea IDs -------------------------------------------------------
+      // Format: mjv-xxxx-xxxx using Crockford base32 (no i, l, o or u, so an
+      // ID can be read aloud or retyped without ambiguity). 8 random chars is
+      // 32^8 ~= 1.1 trillion possibilities, so collisions are vanishingly rare
+      // even before the uniqueness check below. Generation never encodes domain,
+      // author or order — those live in their own columns and are free to change.
+      const IDEA_KEY_PREFIX = "mjv";
+      const IDEA_KEY_ALPHABET = "0123456789abcdefghjkmnpqrstvwxyz";
+      const IDEA_KEY_LENGTH = 8;
+
+      function randomIdeaKey() {
+        const bytes = new Uint8Array(IDEA_KEY_LENGTH);
+        (window.crypto || window.msCrypto).getRandomValues(bytes);
+
+        const chars = [...bytes].map(byte => IDEA_KEY_ALPHABET[byte % IDEA_KEY_ALPHABET.length]).join("");
+        return `${IDEA_KEY_PREFIX}-${chars.slice(0, 4)}-${chars.slice(4)}`;
+      }
+
+      // Generate, then check against what is already loaded. The database's
+      // unique constraint is the real guarantee — this just avoids the round trip.
+      function newIdeaKey() {
+        const taken = new Set(TASKS.map(task => String(task.task_id)));
+
+        for (let attempt = 0; attempt < 12; attempt += 1) {
+          const key = randomIdeaKey();
+          if (!taken.has(key)) return key;
+        }
+
+        return randomIdeaKey();
+      }
+
+      function isIdeaKeyTaken(key) {
+        return TASKS.some(task => String(task.task_id) === String(key));
       }
 
       // Official Mojave taxonomy, limited to the domains this gallery uses.
@@ -1741,7 +1860,7 @@
         const rows = getDomainCoverage();
 
         if (!rows.length) {
-          panel.innerHTML = '<div class="panel"><h2>Domain metrics</h2><p>No domains to count yet.</p></div>';
+          panel.innerHTML = '<div class="panel"><h2>Domain Metrics</h2><p>No domains to count yet.</p></div>';
           return;
         }
 
@@ -1758,7 +1877,7 @@
         panel.innerHTML = `
           <div class="panel">
             <div class="section-heading">
-              <h2>Domain metrics</h2>
+              <h2>Domain Metrics</h2>
               <span class="count-bubble">${rows.length}</span>
             </div>
 
@@ -1951,7 +2070,8 @@
 
         panel.innerHTML = `
           <h2>Your active claim</h2>
-          <div class="list-title">#${escapeHtml(claim.task_id)} — ${escapeHtml(claim.paper_title)}</div>
+          <div class="list-title">${escapeHtml(claim.paper_title)}</div>
+          <div class="task-id">${ideaIdChip(claim.task_id)}</div>
           <div class="muted">Claimed ${formatDate(claim.active_claim_selected_at)}</div>
           <div class="muted">Expires ${formatDate(claim.active_claim_expires_at)}</div>
 
@@ -2042,7 +2162,8 @@
           <h2>Your submitted tasks</h2>
           ${submitted.slice(0, 10).map(task => `
             <div class="list-item">
-              <div class="list-title">#${escapeHtml(task.task_id)} — ${escapeHtml(task.paper_title)}</div>
+              <div class="list-title">${escapeHtml(task.paper_title)}</div>
+              <div class="task-id">${ideaIdChip(task.task_id)}</div>
               <div class="muted">Status: ${escapeHtml(task.status)}</div>
               <div class="muted">Submitted: ${formatDate(task.active_claim_submitted_at)}</div>
               <div class="muted">Snorkel Submission ID: ${escapeHtml(task.active_claim_submission_id || "")}</div>
@@ -2085,6 +2206,25 @@
         if (countEl) countEl.textContent = String(adminSelected.size);
       }
 
+      // Every claim currently shown in the two admin queues.
+      function adminSelectableIds() {
+        return [...getAdminReviewQueue(), ...getAdminUngradeableQueue()]
+          .map(task => task.active_claim_id)
+          .filter(Boolean);
+      }
+
+      function allAdminSelected() {
+        const ids = adminSelectableIds();
+        return ids.length > 0 && ids.every(id => adminSelected.has(id));
+      }
+
+      function toggleSelectAllAdmin() {
+        if (allAdminSelected()) adminSelected.clear();
+        else adminSelectableIds().forEach(id => adminSelected.add(id));
+
+        renderAdminPanel();
+      }
+
       function renderQueueItem(task, opts) {
         const showGradeLater = opts && opts.showGradeLater;
         const checkbox = adminEditMode
@@ -2107,7 +2247,8 @@
         return `
           <div class="list-item">
             ${checkbox}
-            <div class="list-title">#${escapeHtml(task.task_id)} — ${escapeHtml(task.paper_title)}</div>
+            <div class="list-title">${escapeHtml(task.paper_title)}</div>
+              <div class="task-id">${ideaIdChip(task.task_id)}</div>
             <div class="muted">Submitted by: ${escapeHtml(task.active_claim_email || "")}</div>
             <div class="muted">Submitted at: ${formatDate(task.active_claim_submitted_at)}</div>
             <div class="muted">Snorkel Submission ID: ${escapeHtml(task.active_claim_submission_id || "")}</div>
@@ -2151,8 +2292,9 @@
 
         const bulkBar = adminEditMode ? `
           <div class="panel" style="margin-top:14px;background:var(--soft);">
-            <strong>Bulk actions</strong> — <span id="bulkSelectedCount">${adminSelected.size}</span> selected
+            <strong>Bulk actions</strong> — <span id="bulkSelectedCount">${adminSelected.size}</span> of ${adminSelectableIds().length} selected
             <div class="panel-actions">
+              <button class="neutral-button" onclick="toggleSelectAllAdmin()">${allAdminSelected() ? "Clear selection" : "Select all"}</button>
               <button class="success-button" onclick="bulkAction('accept')">Accept selected</button>
               <button class="neutral-button" onclick="bulkAction('ungradeable')">Grade later selected</button>
               <button class="warning-button" onclick="bulkAction('undo')">Undo submission selected</button>
@@ -2325,6 +2467,37 @@
         });
       }
 
+      // "ID: mjv-xxxx-xxxx" with a copy button, used everywhere an idea id shows.
+      function ideaIdChip(taskId, trailing) {
+        const id = String(taskId || "");
+
+        return `
+          <span class="idea-id">
+            <span class="idea-id-label">ID:</span>
+            <code>${escapeHtml(id)}</code>
+            <button class="id-copy" type="button" title="Copy ID" aria-label="Copy ID ${escapeAttr(id)}" onclick="copyIdeaId('${escapeAttr(id)}', event)">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <rect x="9" y="9" width="11" height="11" rx="2.5"></rect>
+                <path d="M5 15V6a2.5 2.5 0 0 1 2.5-2.5H15"></path>
+              </svg>
+            </button>
+            ${trailing ? `<span class="idea-id-trailing">${trailing}</span>` : ""}
+          </span>
+        `;
+      }
+
+      async function copyIdeaId(id, event) {
+        if (event) event.stopPropagation();
+
+        try {
+          await navigator.clipboard.writeText(id);
+          showMessage(`Copied ${id}`);
+        } catch (err) {
+          console.error(err);
+          showError("Could not copy — your browser may be blocking clipboard access.");
+        }
+      }
+
       function renderTaskList() {
         const q = document.getElementById("search").value.toLowerCase();
 
@@ -2384,7 +2557,7 @@
                 </div>
 
                 <h3 class="task-title">${escapeHtml(task.paper_title)}</h3>
-                <p class="task-id">#${escapeHtml(task.task_id)}${task.venue_year ? " · " + escapeHtml(task.venue_year) : ""}</p>
+                <p class="task-id">${ideaIdChip(task.task_id, task.venue_year ? " · " + escapeHtml(task.venue_year) : "")}</p>
 
                 <p class="preview">${escapeHtml(shorten(task.task_concept || "", 96))}</p>
 
@@ -2526,7 +2699,7 @@
             </div>
 
             <h2>${escapeHtml(task.paper_title)}</h2>
-            <p class="task-id">#${escapeHtml(task.task_id)}${task.venue_year ? " · " + escapeHtml(task.venue_year) : ""}</p>
+            <p class="task-id">${ideaIdChip(task.task_id, task.venue_year ? " · " + escapeHtml(task.venue_year) : "")}</p>
 
             <div class="eyebrow">
               <span class="pill ${escapeHtml(effectiveStatus(task))}">${escapeHtml(effectiveStatus(task))}</span>
@@ -2807,7 +2980,7 @@
       function buildIdeaText(task) {
         const lines = [];
 
-        lines.push(`${task.paper_title || ""} (#${task.task_id})`);
+        lines.push(`${task.paper_title || ""} (ID: ${task.task_id})`);
 
         const meta = [task.venue_year, task.domain, task.subdomain, task.compute_type].filter(Boolean).join(" · ");
         if (meta) lines.push(meta);
@@ -3030,8 +3203,12 @@
             <p class="muted">This adds or updates one Mojave task idea by Display ID. It does not touch claims, submissions, or approvals.</p>
 
             <div class="modal-section">
-              <h3>Display ID</h3>
-              <input id="newTaskDisplayId" placeholder="6">
+              <h3>Idea ID</h3>
+              <div style="display:flex;gap:10px;align-items:center;">
+                <input id="newTaskDisplayId" placeholder="mjv-xxxx-xxxx" style="flex:1;">
+                <button class="neutral-button" type="button" onclick="regenerateIdeaKey()">New ID</button>
+              </div>
+              <p class="muted" style="margin-top:6px;">Generated automatically. Checked against existing ideas before saving.</p>
             </div>
 
             <div class="modal-section">
@@ -3099,6 +3276,12 @@
 
         document.body.appendChild(modal);
         syncSubdomainOptions();
+        regenerateIdeaKey();
+      }
+
+      function regenerateIdeaKey() {
+        const input = document.getElementById("newTaskDisplayId");
+        if (input) input.value = newIdeaKey();
       }
 
       function syncSubdomainOptions() {
@@ -3134,7 +3317,7 @@
         const verifierIdeas = String(document.getElementById("newTaskVerifierIdeas")?.value || "").trim();
 
         if (!displayId) {
-          showError("Display ID is required.");
+          showError("Idea ID is required.");
           return;
         }
 
@@ -3151,7 +3334,7 @@
         const existingTask = TASKS.find(task => String(task.task_id) === String(displayId));
 
         if (existingTask) {
-          const ok = window.confirm("A task with this Display ID already exists. Continue to update it?");
+          const ok = window.confirm("An idea with this ID already exists. Continue to update it?");
           if (!ok) return;
         }
 
@@ -3165,6 +3348,7 @@
         const { error } = await supabaseClient
           .from("harbor_tasks")
           .upsert({
+            created_at: existingTask ? existingTask.created_at : new Date().toISOString(),
             display_id: displayId,
             priority,
             compute_type: computeType,
