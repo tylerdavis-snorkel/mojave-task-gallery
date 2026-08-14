@@ -2163,7 +2163,7 @@
 
           <div style="margin-top: 14px;">
             <input id="snorkelSubmissionId" placeholder="Snorkel Submission ID" oninput="onSubmissionIdInput()">
-            <p class="muted" style="margin-top: 6px;">Please ensure this is the proper UID from the upper left hand side of the task UI</p>
+            <p class="muted" id="submissionIdHelp" style="margin-top: 6px;">Please ensure this is the proper UID from the upper left hand side of the task UI</p>
             <p class="field-hint" id="submissionIdHint">
               Uh oh! That doesn't look like the submission ID.
               <a href="#" onclick="openWhereIsIdModal(); return false;">Where's my submission ID?</a>
@@ -2188,9 +2188,12 @@
 
         const val = input.value.trim();
         const valid = isValidSubmissionId(val);
+        const showHint = Boolean(val) && !valid;
 
-        // Show the "uh oh" hint once they've typed something that isn't valid.
-        if (hint) hint.style.display = (val && !valid) ? "block" : "none";
+        // The warning takes the place of the help line rather than stacking under it.
+        const help = document.getElementById("submissionIdHelp");
+        if (help) help.style.display = showHint ? "none" : "block";
+        if (hint) hint.style.display = showHint ? "block" : "none";
 
         // Button is only clickable when the ID is a valid UID.
         if (btn) btn.disabled = !valid;
