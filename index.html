@@ -1178,8 +1178,8 @@
         <div class="tab-bar">
           <button class="tab-button active" id="tabButtonBrowse" onclick="switchTab('browse')">Browse Tasks</button>
           <button class="tab-button" id="tabButtonClaimLog" onclick="switchTab('claimlog')" style="display: none;">Claim Log</button>
-          <button class="tab-button" id="tabButtonBlocked" onclick="switchTab('blocked')" style="display: none;">Admin Blocked</button>
           <button class="tab-button" id="tabButtonAdmin" onclick="switchTab('admin')" style="display: none;">Admin Tools</button>
+          <button class="tab-button" id="tabButtonBlocked" onclick="switchTab('blocked')" style="display: none;">Admin Blocked</button>
         </div>
 
         <div id="browseTab">
@@ -2383,51 +2383,81 @@
         `;
       }
 
+      // Blocks an idea whether or not somebody is holding it. A live claim is
+      // revoked; an unclaimed idea gets an admin-owned block row.
       async function blockClaim(taskId) {
         clearMessage();
         clearError();
 
         if (!isAdmin()) {
-          showError("You do not have permission to block claims.");
+          showError("You do not have permission to block ideas.");
           return;
         }
 
         const task = TASKS.find(t => String(t.task_id) === String(taskId));
 
-        if (!task || task.status !== "Claimed" || !task.active_claim_id) {
-          showError("That idea is no longer claimed, so there is nothing to block.");
+        if (!task) {
+          showError("Could not find idea " + taskId);
           return;
         }
 
-        const warning =
-          `Block ${task.active_claim_email || "this contributor"}'s claim on "${task.idea_title}"?\n\n` +
-          "The idea will be marked Blocked and nobody can claim it until an admin unblocks it in the Admin Blocked tab.";
+        if (task.status === "Blocked") {
+          showError("That idea is already blocked.");
+          return;
+        }
+
+        if (!["Available", "Claimed"].includes(effectiveStatus(task))) {
+          showError(`That idea is ${effectiveStatus(task).toLowerCase()}, so there is nothing to block.`);
+          return;
+        }
+
+        const holdsClaim = task.status === "Claimed" && task.active_claim_id;
+
+        const warning = holdsClaim
+          ? `Block ${task.active_claim_email || "this contributor"}'s claim on "${task.idea_title}"?\n\n` +
+            "The idea will be marked Blocked and nobody can claim it until an admin unblocks it in the Admin Blocked tab."
+          : `Block "${task.idea_title}"?\n\n` +
+            "Nobody is holding it right now. Blocking takes it out of circulation until an admin unblocks it in the Admin Blocked tab.";
 
         if (!window.confirm(warning)) return;
 
         const now = new Date().toISOString();
 
-        const { error } = await supabaseClient
-          .from("mojave_claims")
-          .update({
-            status: "blocked",
-            reviewed_at: now,
-            reviewed_by: currentUser.id,
-            admin_email: currentUser.email || null,
-            expires_at: null,
-            notes: "Blocked by admin — claimed without commitment to use the idea"
-          })
-          .eq("id", task.active_claim_id);
+        const { error } = holdsClaim
+          ? await supabaseClient
+              .from("mojave_claims")
+              .update({
+                status: "blocked",
+                reviewed_at: now,
+                reviewed_by: currentUser.id,
+                admin_email: currentUser.email || null,
+                expires_at: null,
+                notes: "Blocked by admin — claim revoked"
+              })
+              .eq("id", task.active_claim_id)
+          : await supabaseClient
+              .from("mojave_claims")
+              .insert({
+                task_id: task.id,
+                user_id: currentUser.id,
+                user_email: currentUser.email || null,
+                status: "blocked",
+                selected_at: now,
+                reviewed_at: now,
+                reviewed_by: currentUser.id,
+                admin_email: currentUser.email || null,
+                notes: "Blocked by admin — no claim held"
+              });
 
         if (error) {
           console.error(error);
-          showError("Could not block this claim.");
+          showError("Could not block this idea.");
           return;
         }
 
-        await logClaimEvent(task, "blocked", task.active_claim_intent);
+        await logClaimEvent(task, "blocked", holdsClaim ? task.active_claim_intent : null);
 
-        showMessage("Claim blocked. The idea is in the Admin Blocked tab until it is unblocked.");
+        showMessage("Blocked. The idea is in the Admin Blocked tab until it is unblocked.");
         await loadTasks();
       }
 
@@ -2516,8 +2546,8 @@
                     <tr>
                       <td class="domain-cell">${escapeHtml(task.idea_title || "")}<div class="muted" style="font-weight:400;">${escapeHtml(task.task_id)}</div></td>
                       <td>${escapeHtml(task.domain || "")}</td>
-                      <td>${escapeHtml(task.active_claim_email || "unknown")}</td>
-                      <td>${escapeHtml(intentLabel(task.active_claim_intent))}</td>
+                      <td>${task.active_claim_intent ? escapeHtml(task.active_claim_email || "unknown") : "<span class=\"muted\">no claim held</span>"}</td>
+                      <td>${escapeHtml(intentLabel(task.active_claim_intent)) || "<span class=\"muted\">—</span>"}</td>
                       <td><button class="success-button" onclick="unblockIdea('${escapeAttr(String(task.task_id))}')">Unblock</button></td>
                     </tr>
                   `).join("")}
@@ -2526,6 +2556,24 @@
             ` : `<div class="empty">Nothing is blocked.</div>`}
           </div>
         `;
+      }
+
+      // Every row gets an action, reflecting where the idea stands now.
+      function renderClaimLogAction(task) {
+        if (!task) return "";
+
+        const id = escapeAttr(String(task.task_id));
+        const status = effectiveStatus(task);
+
+        if (status === "Blocked") {
+          return `<button class="success-button" onclick="unblockIdea('${id}')">Unblock</button>`;
+        }
+
+        if (["Available", "Claimed"].includes(status)) {
+          return `<button class="danger-button" onclick="blockClaim('${id}')">Block claim</button>`;
+        }
+
+        return `<button class="danger-button" disabled title="This idea is ${escapeAttr(status.toLowerCase())} — nothing to block">Block claim</button>`;
       }
 
       const CLAIM_EVENT_LABELS = {
@@ -2581,13 +2629,7 @@
                 </thead>
                 <tbody>
                   ${events.map(item => {
-                    // Only actionable while that person still holds the idea.
                     const task = TASKS.find(t => String(t.task_id) === String(item.idea_display_id));
-                    const canBlock =
-                      item.event === "claimed" &&
-                      task &&
-                      task.status === "Claimed" &&
-                      String(task.active_claim_email || "") === String(item.user_email || "");
 
                     return `
                     <tr>
@@ -2595,9 +2637,7 @@
                       <td class="domain-cell">${escapeHtml(item.idea_title || "")}<div class="muted" style="font-weight:400;">${escapeHtml(item.idea_display_id || "")}</div></td>
                       <td><span class="pill ${escapeHtml(CLAIM_EVENT_PILLS[item.event] || "")}">${escapeHtml(CLAIM_EVENT_LABELS[item.event] || item.event)}</span></td>
                       <td>${escapeHtml(intentLabel(item.intent))}</td>
-                      <td>${canBlock
-                        ? `<button class="danger-button" onclick="blockClaim('${escapeAttr(String(item.idea_display_id))}')">Block claim</button>`
-                        : ""}</td>
+                      <td>${renderClaimLogAction(task)}</td>
                     </tr>
                   `;
                   }).join("")}
