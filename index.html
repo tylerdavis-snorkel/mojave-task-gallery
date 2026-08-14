@@ -873,6 +873,23 @@
         to { opacity: 1; transform: translateY(0); }
       }
 
+      .admin-actions-row {
+        display: flex;
+        align-items: flex-start;
+        justify-content: space-between;
+        gap: 16px;
+        flex-wrap: wrap;
+      }
+
+      .admin-actions-row .panel-actions {
+        flex: 1 1 auto;
+      }
+
+      .admin-actions-row > .neutral-button {
+        margin-top: 14px;
+        flex: 0 0 auto;
+      }
+
       .metrics-table {
         width: 100%;
         margin-top: 16px;
@@ -1140,7 +1157,6 @@
 
         <div class="tab-bar">
           <button class="tab-button active" id="tabButtonBrowse" onclick="switchTab('browse')">Browse Tasks</button>
-          <button class="tab-button" id="tabButtonMetrics" onclick="switchTab('metrics')" style="display: none;">Domain Metrics</button>
           <button class="tab-button" id="tabButtonAdmin" onclick="switchTab('admin')" style="display: none;">Admin Tools</button>
         </div>
 
@@ -1179,8 +1195,6 @@
 
           <div id="taskList">Loading tasks...</div>
         </div>
-
-        <div id="metricsTab" style="display: none;"></div>
 
         <div class="panel" id="adminTab" style="display: none;"></div>
       </div>
@@ -1242,7 +1256,6 @@
 
       let TASKS = [];
       let CLAIMS = [];
-      let VISITS = [];
       let currentUser = null;
 
       const LOCAL_DB = {
@@ -1484,8 +1497,8 @@
         }
       };
 
-      // One row per page load, for signed-in users only. No duration, no
-      // heartbeat — just who opened the gallery and when.
+      // One row per page load, for signed-in users only. Write-only by design:
+      // the gallery never reads these back — visits are reviewed in Supabase.
       let visitLogged = false;
 
       async function recordVisit() {
@@ -1636,18 +1649,6 @@
         }
 
         CLAIMS = claimsData || [];
-
-        if (isAdmin()) {
-          const { data: visitData, error: visitError } = await supabaseClient
-            .from("gallery_visits")
-            .select("id, user_email, visited_at")
-            .order("visited_at", { ascending: false });
-
-          if (visitError) console.error(visitError);
-          VISITS = visitData || [];
-        } else {
-          VISITS = [];
-        }
 
         TASKS = (tasksData || [])
           .map((task) => {
@@ -1889,19 +1890,30 @@
         return { label: "OK", pill: "Available", cls: "" };
       }
 
-      function renderMetricsPanel() {
-        const panel = document.getElementById("metricsTab");
-        if (!panel) return;
-
+      function openDomainMetricsModal() {
         if (!isAdmin()) {
-          panel.innerHTML = "";
+          showError("You do not have permission to view domain metrics.");
           return;
         }
 
         const rows = getDomainCoverage();
 
+        const modal = document.createElement("div");
+        modal.className = "modal-backdrop";
+
+        modal.onclick = function (event) {
+          if (event.target === modal) modal.remove();
+        };
+
         if (!rows.length) {
-          panel.innerHTML = '<div class="panel"><h2>Domain Metrics</h2><p>No domains to count yet.</p></div>';
+          modal.innerHTML = `
+            <div class="modal">
+              <button class="modal-close" onclick="this.closest('.modal-backdrop').remove()">×</button>
+              <h2>Domain Metrics</h2>
+              <p class="muted">No domains to count yet.</p>
+            </div>
+          `;
+          document.body.appendChild(modal);
           return;
         }
 
@@ -1915,9 +1927,11 @@
           used: acc.used + row.used
         }), { total: 0, available: 0, claimed: 0, submitted: 0, approved: 0, used: 0 });
 
-        panel.innerHTML = `
-          <div class="panel">
-            <div class="section-heading">
+        modal.innerHTML = `
+          <div class="modal">
+            <button class="modal-close" onclick="this.closest('.modal-backdrop').remove()">×</button>
+
+            <div class="section-heading" style="margin-top:8px;">
               <h2>Domain Metrics</h2>
               <span class="count-bubble">${rows.length}</span>
             </div>
@@ -1973,8 +1987,14 @@
                 </tr>
               </tfoot>
             </table>
+
+            <div class="modal-footer">
+              <a class="primary-button" href="#" onclick="this.closest('.modal-backdrop').remove(); return false;">Close</a>
+            </div>
           </div>
         `;
+
+        document.body.appendChild(modal);
       }
 
       function getAdminReviewQueue() {
@@ -2218,13 +2238,9 @@
       function switchTab(tab) {
         currentTab = tab;
         document.getElementById("browseTab").style.display = tab === "browse" ? "" : "none";
-        document.getElementById("metricsTab").style.display = tab === "metrics" ? "block" : "none";
         document.getElementById("adminTab").style.display = tab === "admin" ? "block" : "none";
         document.getElementById("tabButtonBrowse").classList.toggle("active", tab === "browse");
-        document.getElementById("tabButtonMetrics").classList.toggle("active", tab === "metrics");
         document.getElementById("tabButtonAdmin").classList.toggle("active", tab === "admin");
-
-        if (tab === "metrics") renderMetricsPanel();
       }
 
       let adminEditMode = false;
@@ -2298,75 +2314,22 @@
         `;
       }
 
-      // Plain log: who opened the gallery, and when.
-      function visitLog() {
-        return [...VISITS].sort((a, b) =>
-          String(b.visited_at || "").localeCompare(String(a.visited_at || ""))
-        );
-      }
-
-      const VISIT_LOG_LIMIT = 100;
-
-      function renderVisitsSection() {
-        const visits = visitLog();
-        const shown = visits.slice(0, VISIT_LOG_LIMIT);
-        const people = new Set(visits.map(visit => String(visit.user_email || "unknown"))).size;
-
-        return `
-          <div class="section-heading" style="margin-top:28px;">
-            <h2>Site visits</h2>
-            <span class="count-bubble">${visits.length}</span>
-          </div>
-
-          <p class="muted">
-            Every time a signed-in user opens the gallery, newest first.
-            ${people} ${people === 1 ? "person has" : "people have"} opened it.
-            ${visits.length > VISIT_LOG_LIMIT ? `Showing the most recent ${VISIT_LOG_LIMIT}.` : ""}
-          </p>
-
-          ${shown.length ? `
-            <table class="metrics-table">
-              <thead>
-                <tr>
-                  <th>Contributor</th>
-                  <th>Opened at</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${shown.map(visit => `
-                  <tr>
-                    <td class="domain-cell">${escapeHtml(visit.user_email || "unknown")}</td>
-                    <td>${escapeHtml(formatDate(visit.visited_at))}</td>
-                  </tr>
-                `).join("")}
-              </tbody>
-            </table>
-          ` : `<div class="empty">No visits recorded yet.</div>`}
-        `;
-      }
-
       function renderAdminPanel() {
         const tabButton = document.getElementById("tabButtonAdmin");
         const panel = document.getElementById("adminTab");
 
-        const metricsButton = document.getElementById("tabButtonMetrics");
-
         if (!isAdmin()) {
           tabButton.style.display = "none";
-          metricsButton.style.display = "none";
           panel.innerHTML = "";
-          document.getElementById("metricsTab").innerHTML = "";
           adminEditMode = false;
           adminSelected.clear();
-          if (currentTab === "admin" || currentTab === "metrics") {
+          if (currentTab === "admin") {
             switchTab("browse");
           }
           return;
         }
 
         tabButton.style.display = "inline-block";
-        metricsButton.style.display = "inline-block";
-        renderMetricsPanel();
 
         if (currentTab === "admin") {
           panel.style.display = "block";
@@ -2395,15 +2358,16 @@
         panel.innerHTML = `
           <h2>Admin tools</h2>
           <p>Use these tools carefully. Clear expired claims only affects claims past the 24-hour window.</p>
-          <div class="panel-actions">
-            <button class="primary-button" onclick="openAddTaskModal()">Add task</button>
-            <button class="warning-button" onclick="clearExpiredClaims()">Clear expired claims</button>
-            <button class="${adminEditMode ? "primary-button" : "neutral-button"}" onclick="toggleAdminEditMode()">${adminEditMode ? "Exit edit mode" : "Edit"}</button>
+          <div class="admin-actions-row">
+            <div class="panel-actions">
+              <button class="primary-button" onclick="openAddTaskModal()">Add task</button>
+              <button class="warning-button" onclick="clearExpiredClaims()">Clear expired claims</button>
+              <button class="${adminEditMode ? "primary-button" : "neutral-button"}" onclick="toggleAdminEditMode()">${adminEditMode ? "Exit edit mode" : "Edit"}</button>
+            </div>
+            <button class="neutral-button" onclick="openDomainMetricsModal()">Domain Metrics</button>
           </div>
 
           ${bulkBar}
-
-          ${renderVisitsSection()}
 
           <div class="queue-columns">
             <div>
