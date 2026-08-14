@@ -2344,16 +2344,69 @@
         `;
       }
 
+      // Intents that do not justify holding an idea. Admins can block these.
+      const LOW_CONFIDENCE_INTENTS = new Set(["might_use", "browsing"]);
+
+      async function blockClaim(taskId) {
+        clearMessage();
+        clearError();
+
+        if (!isAdmin()) {
+          showError("You do not have permission to block claims.");
+          return;
+        }
+
+        const task = TASKS.find(t => String(t.task_id) === String(taskId));
+
+        if (!task || task.status !== "Claimed" || !task.active_claim_id) {
+          showError("That idea is no longer claimed, so there is nothing to block.");
+          return;
+        }
+
+        const warning =
+          `Block ${task.active_claim_email || "this contributor"}'s claim on "${task.idea_title}"?\n\n` +
+          "The idea will be marked Blocked and nobody can claim it until it is reopened from Admin Tools.";
+
+        if (!window.confirm(warning)) return;
+
+        const now = new Date().toISOString();
+
+        const { error } = await supabaseClient
+          .from("mojave_claims")
+          .update({
+            status: "blocked",
+            reviewed_at: now,
+            reviewed_by: currentUser.id,
+            admin_email: currentUser.email || null,
+            expires_at: null,
+            notes: "Blocked by admin — claimed without commitment to use the idea"
+          })
+          .eq("id", task.active_claim_id);
+
+        if (error) {
+          console.error(error);
+          showError("Could not block this claim.");
+          return;
+        }
+
+        await logClaimEvent(task, "blocked", task.active_claim_intent);
+
+        showMessage("Claim blocked. The idea is out of circulation until it is reopened.");
+        await loadTasks();
+      }
+
       const CLAIM_EVENT_LABELS = {
         claimed: "Claimed",
         released: "Released",
-        submitted: "Submitted"
+        submitted: "Submitted",
+        blocked: "Blocked by admin"
       };
 
       const CLAIM_EVENT_PILLS = {
         claimed: "Claimed",
-        released: "Blocked",
-        submitted: "Submitted"
+        released: "Expired",
+        submitted: "Submitted",
+        blocked: "Blocked"
       };
 
       function renderClaimLog() {
@@ -2374,7 +2427,11 @@
               <span class="count-bubble">${events.length}</span>
             </div>
 
-            <p class="muted">Newest first. "Intent" is what the contributor selected when they claimed the idea.</p>
+            <p class="muted">
+              Newest first. "Intent" is what the contributor selected when they claimed the idea.
+              Claims made with anything less than "Going to use it" can be blocked, which marks the idea
+              Blocked and takes it out of circulation until it is reopened from Admin Tools.
+            </p>
 
             ${events.length ? `
               <table class="metrics-table">
@@ -2384,17 +2441,32 @@
                     <th>Idea</th>
                     <th>Event</th>
                     <th>Intent</th>
+                    <th></th>
                   </tr>
                 </thead>
                 <tbody>
-                  ${events.map(item => `
+                  ${events.map(item => {
+                    // Only actionable while that person still holds the idea.
+                    const task = TASKS.find(t => String(t.task_id) === String(item.idea_display_id));
+                    const canBlock =
+                      item.event === "claimed" &&
+                      LOW_CONFIDENCE_INTENTS.has(item.intent) &&
+                      task &&
+                      task.status === "Claimed" &&
+                      String(task.active_claim_email || "") === String(item.user_email || "");
+
+                    return `
                     <tr>
                       <td>${escapeHtml(item.user_email || "unknown")}</td>
                       <td class="domain-cell">${escapeHtml(item.idea_title || "")}<div class="muted" style="font-weight:400;">${escapeHtml(item.idea_display_id || "")}</div></td>
                       <td><span class="pill ${escapeHtml(CLAIM_EVENT_PILLS[item.event] || "")}">${escapeHtml(CLAIM_EVENT_LABELS[item.event] || item.event)}</span></td>
                       <td>${escapeHtml(intentLabel(item.intent))}</td>
+                      <td>${canBlock
+                        ? `<button class="danger-button" onclick="blockClaim('${escapeAttr(String(item.idea_display_id))}')">Block claim</button>`
+                        : ""}</td>
                     </tr>
-                  `).join("")}
+                  `;
+                  }).join("")}
                 </tbody>
               </table>
             ` : `<div class="empty">Nothing claimed yet.</div>`}
