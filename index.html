@@ -1826,7 +1826,7 @@
           if (!rows.has(domain)) {
             rows.set(domain, {
               domain, total: 0, available: 0, claimed: 0,
-              submitted: 0, approved: 0, other: 0, used: 0
+              submitted: 0, approved: 0, other: 0
             });
           }
 
@@ -1840,9 +1840,6 @@
           else if (status === "Submitted") row.submitted += 1;
           else if (status === "Approved") row.approved += 1;
           else row.other += 1;
-
-          // "Used" is anything that has left the available pool.
-          if (status !== "Available") row.used += 1;
         });
 
         // Thinnest domains first so the gaps are the first thing you see.
@@ -1890,9 +1887,8 @@
           available: acc.available + row.available,
           claimed: acc.claimed + row.claimed,
           submitted: acc.submitted + row.submitted,
-          approved: acc.approved + row.approved,
-          used: acc.used + row.used
-        }), { total: 0, available: 0, claimed: 0, submitted: 0, approved: 0, used: 0 });
+          approved: acc.approved + row.approved
+        }), { total: 0, available: 0, claimed: 0, submitted: 0, approved: 0 });
 
         modal.innerHTML = `
           <div class="modal">
@@ -1918,7 +1914,6 @@
                   <th class="num">Claimed</th>
                   <th class="num">Submitted</th>
                   <th class="num">Approved</th>
-                  <th class="num">Used</th>
                   <th class="num">Total</th>
                   <th>Status</th>
                 </tr>
@@ -1934,7 +1929,6 @@
                       <td class="num">${row.claimed}</td>
                       <td class="num">${row.submitted}</td>
                       <td class="num">${row.approved}</td>
-                      <td class="num">${row.used}</td>
                       <td class="num">${row.total}</td>
                       <td><span class="pill ${flag.pill}">${escapeHtml(flag.label)}</span></td>
                     </tr>
@@ -1948,7 +1942,6 @@
                   <td class="num">${totals.claimed}</td>
                   <td class="num">${totals.submitted}</td>
                   <td class="num">${totals.approved}</td>
-                  <td class="num">${totals.used}</td>
                   <td class="num">${totals.total}</td>
                   <td></td>
                 </tr>
