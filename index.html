@@ -545,18 +545,41 @@
         font-weight: 700;
       }
 
+      .load-error {
+        padding: 28px;
+        border: 1px solid var(--border);
+        border-left: 3px solid var(--red-ink);
+        border-radius: 18px;
+        background: var(--card);
+        color: var(--muted);
+      }
+
+      .load-error strong {
+        display: block;
+        margin-bottom: 6px;
+        color: var(--text);
+        font-size: 17px;
+      }
+
+      .load-error p {
+        margin: 0 0 16px;
+        font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
       .toast {
         position: fixed;
         z-index: 1200;
-        max-width: 320px;
-        padding: 11px 14px;
+        max-width: 300px;
+        padding: 10px 13px;
         border-radius: 12px;
         border: 1px solid transparent;
         background: var(--notice-bg);
         color: var(--notice-ink);
-        font-size: 14px;
-        font-weight: 700;
-        line-height: 1.4;
+        font-size: 13px;
+        font-weight: 600;
+        line-height: 1.45;
         box-shadow: var(--shadow-lg);
         opacity: 0;
         transform: translateY(6px);
@@ -570,9 +593,9 @@
       }
 
       .toast.is-error {
-        background: var(--red-soft);
+        background: var(--notice-bg);
         border-color: var(--red-ink);
-        color: var(--red-ink);
+        color: var(--notice-ink);
       }
 
       .eyebrow {
@@ -1496,7 +1519,7 @@
 
         if (tasksError) {
           console.error(tasksError);
-          showError("Could not load task ideas:\n" + tasksError.message);
+          showLoadError(tasksError.message);
           return;
         }
 
@@ -1507,7 +1530,7 @@
 
         if (claimsError) {
           console.error(claimsError);
-          showError("Could not load claim state:\n" + claimsError.message);
+          showLoadError(claimsError.message);
           return;
         }
 
@@ -3825,6 +3848,20 @@
 
         showMessage(existingTask ? "Task updated." : "Task added.");
         await loadTasks();
+      }
+
+      // Load failures explain themselves in the page rather than floating over it.
+      function showLoadError(message) {
+        const el = document.getElementById("taskList");
+        if (!el) return;
+
+        el.innerHTML = `
+          <div class="load-error">
+            <strong>Could not load the gallery</strong>
+            <p>${escapeHtml(message)}</p>
+            <button class="neutral-button" onclick="loadTasks()">Try again</button>
+          </div>
+        `;
       }
 
       // Remember where the last click landed so a toast can appear next to it
