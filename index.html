@@ -1429,6 +1429,7 @@
 
       async function signOut() {
         await supabaseClient.auth.signOut();
+        unsubscribeFromChanges();
         currentUser = null;
         ADMIN_EMAILS = [];
         await loadTasks();
@@ -4020,11 +4021,55 @@
         applyTheme(prefersDark ? "dark" : "light");
       }
 
+      // ---- Realtime -------------------------------------------------------
+      // Someone else claims an idea and every open tab reflects it, no refresh.
+      let realtimeChannel = null;
+      let refreshTimer = null;
+
+      // A burst of changes (claim writes a claim row and a log row) should cause
+      // one reload, not several.
+      function scheduleRefresh(delay) {
+        window.clearTimeout(refreshTimer);
+
+        refreshTimer = window.setTimeout(async () => {
+          // Never yank the page out from under someone mid-action.
+          const modalOpen = document.querySelector(".modal-backdrop");
+          const idField = document.getElementById("snorkelSubmissionId");
+          const midSubmission = idField && (idField === document.activeElement || idField.value.trim());
+
+          if (modalOpen || midSubmission) {
+            scheduleRefresh(2500);
+            return;
+          }
+
+          await loadTasks();
+        }, delay || 450);
+      }
+
+      function subscribeToChanges() {
+        if (realtimeChannel || !currentUser) return;
+
+        realtimeChannel = supabaseClient
+          .channel("mojave-gallery")
+          .on("postgres_changes", { event: "*", schema: "public", table: "mojave_claims" }, () => scheduleRefresh())
+          .on("postgres_changes", { event: "*", schema: "public", table: "mojave_ideas" }, () => scheduleRefresh())
+          .subscribe();
+      }
+
+      function unsubscribeFromChanges() {
+        if (!realtimeChannel) return;
+        supabaseClient.removeChannel(realtimeChannel);
+        realtimeChannel = null;
+      }
+
       async function refreshEverything() {
         await loadSession();
         await loadAdmins();
         await recordVisit();
         await loadTasks();
+
+        if (currentUser) subscribeToChanges();
+        else unsubscribeFromChanges();
       }
 
       async function init() {
