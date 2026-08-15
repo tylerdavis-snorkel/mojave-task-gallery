@@ -1510,6 +1510,15 @@
         clearMessage();
         clearError();
 
+        // Nothing is readable without a session, so don't ask — show the gate.
+        if (!currentUser) {
+          TASKS = [];
+          CLAIMS = [];
+          CLAIM_EVENTS = [];
+          render();
+          return;
+        }
+
         await expireOldClaims();
 
         const { data: tasksData, error: tasksError } = await supabaseClient
