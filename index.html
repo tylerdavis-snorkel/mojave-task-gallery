@@ -1213,7 +1213,7 @@
         <div class="panel-actions" style="margin-top: 0;">
           <button class="link-button" id="themeToggle" onclick="toggleTheme()">Dark mode</button>
           <button class="link-button" onclick="openContributorGuideModal()">How to claim tasks</button>
-          <button class="primary-button" id="signInButton" onclick="signInWithGitHub()">Sign in with GitHub</button>
+          <button class="primary-button" id="signInButton" onclick="signInWithGoogle()">Sign in with Google</button>
           <button class="link-button" id="signOutButton" onclick="signOut()" style="display: none;">Sign out</button>
         </div>
       </div>
@@ -1697,9 +1697,9 @@
         currentUser = data.session?.user || null;
       }
 
-      async function signInWithGitHub() {
+      async function signInWithGoogle() {
         const { error } = await supabaseClient.auth.signInWithOAuth({
-          provider: "github",
+          provider: "google",
           options: {
             // Wherever this page is served from — no hardcoded deploy URL to
             // keep in sync. Add the same URL to Supabase > Auth > URL Configuration.
@@ -1709,7 +1709,7 @@
 
         if (error) {
           console.error(error);
-          showError("Could not start GitHub sign-in.");
+          showError("Could not start Google sign-in.");
         }
       }
 
@@ -2264,9 +2264,9 @@
           el.innerHTML = `
             <div class="panel">
               <h2>Sign in to view this dashboard</h2>
-              <p>This dashboard is limited to approved contributors. Sign in with GitHub to continue.</p>
+              <p>This dashboard is limited to approved contributors. Sign in with Google to continue.</p>
               <div class="panel-actions">
-                <button class="primary-button" onclick="signInWithGitHub()">Sign in with GitHub</button>
+                <button class="primary-button" onclick="signInWithGoogle()">Sign in with Google</button>
               </div>
             </div>
           `;
@@ -2316,9 +2316,9 @@
         if (!currentUser) {
           panel.innerHTML = `
             <h2>Your active claim</h2>
-            <p>Sign in with GitHub to claim and submit tasks.</p>
+            <p>Sign in with Google to claim and submit tasks.</p>
             <div class="panel-actions">
-              <button class="primary-button" onclick="signInWithGitHub()">Sign in with GitHub</button>
+              <button class="primary-button" onclick="signInWithGoogle()">Sign in with Google</button>
             </div>
           `;
           return;
@@ -3277,7 +3277,7 @@
 
             <div class="modal-section">
               <h3>1. Sign in</h3>
-              <p>Click <strong>Sign in with GitHub</strong>. You need to be signed in before you can claim or submit a task.</p>
+              <p>Click <strong>Sign in with Google</strong>. You need to be signed in before you can claim or submit a task.</p>
             </div>
 
             <div class="modal-section">
@@ -3423,7 +3423,7 @@
         }
 
         if (!currentUser) {
-          signInWithGitHub();
+          signInWithGoogle();
           return;
         }
 
@@ -3500,7 +3500,7 @@
         }
 
         if (!currentUser) {
-          await signInWithGitHub();
+          await signInWithGoogle();
           return;
         }
 
@@ -3553,7 +3553,7 @@
         clearError();
 
         if (!currentUser) {
-          await signInWithGitHub();
+          await signInWithGoogle();
           return;
         }
 
@@ -3591,7 +3591,7 @@
         clearError();
 
         if (!currentUser) {
-          await signInWithGitHub();
+          await signInWithGoogle();
           return;
         }
 
