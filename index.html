@@ -1196,6 +1196,7 @@
       }
     </style>
 
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   </head>
 
   <body>
@@ -1323,348 +1324,38 @@
       }
 
       const EXCLUDED_TASK_TITLES = new Set([]);
-      const ADMIN_EMAILS = [
-        "anastasia.kozlova@snorkel.ai",
-        "brittany.barthel@snorkel.ai",
-        "christian.arroyo@snorkel.ai",
-        "courtney.jeung@snorkel.ai",
-        "dan.nguyen@snorkel.ai",
-        "dhananjay.gavade@snorkel.ai",
-        "dillon.gallus@snorkel.ai",
-        "dmitiry.samsonov@snorkel.ai",
-        "hao.nguyen@snorkel.ai",
-        "julia.szenderski@snorkel.ai",
-        "liam.glynn@snorkel.ai",
-        "louisa.savageaux@snorkel.ai",
-        "luis.torrealba@snorkel.ai",
-        "mary.johnson@snorkel.ai",
-        "michael.goland@snorkel.ai",
-        "patrick.dwyer@snorkel.ai",
-        "raphael.sanandres@snorkel.ai",
-        "ryan.cohen@snorkel.ai",
-        "sebastian.rojofernandez@snorkel.ai",
-        "tunni.chiang@snorkel.ai",
-        "tyler.davis@snorkel.ai",
-        "victor.flint@snorkel.ai"
-      ];
+      // Loaded from the mojave_admins table after sign-in, so adding an admin
+      // is one INSERT rather than an edit and redeploy.
+      let ADMIN_EMAILS = [];
+
+      async function loadAdmins() {
+        if (!currentUser) {
+          ADMIN_EMAILS = [];
+          return;
+        }
+
+        const { data, error } = await supabaseClient
+          .from("mojave_admins")
+          .select("email");
+
+        if (error) {
+          console.error(error);
+          ADMIN_EMAILS = [];
+          return;
+        }
+
+        ADMIN_EMAILS = (data || []).map(row => String(row.email || "").toLowerCase());
+      }
 
       let TASKS = [];
       let CLAIMS = [];
       let CLAIM_EVENTS = [];
       let currentUser = null;
 
-      const LOCAL_DB = {
-        mojave_ideas: [
-          {
-                    "id": "idea-0001-4a1b-8c2d-000000000001",
-                    "display_id": "mjv-bhw3-8c6v",
-                    "domain": "Sociology",
-                    "subdomain": "Social Theory",
-                    "idea_title": "Same pattern, two theories",
-                    "task_concept": "Two traditions can predict the same pattern and disagree completely about why it happens. That gap is where the question lives. Describe a documented pattern in class reproduction or mobility — who ends up where, and by what route — and ask the reader which account the evidence actually supports. The work is not recognizing the pattern, which any graduate student can do; it is noticing the one detail in the description that only one mechanism can explain. Choose a pattern from research you know well enough to defend line by line, and let the mechanism carry the answer rather than the outcome.",
-                    "suggested_angles": "Traditions that agree on the outcome but split on the mechanism\nPut the discriminating detail in the stem, quietly, among others that do not matter\nNo theorist named anywhere in the question\nThe reader should have to ask what each account would predict next, not what it is called",
-                    "created_at": "2025-08-13T15:46:40Z",
-                    "example_question": "A longitudinal study of one metropolitan school district finds that children of professionals enter selective universities at far higher rates than children of manual workers with identical measured test scores. The gap opens at the point of application rather than examination, and is widest among families with no additional household income but extensive familiarity with admissions procedures. Which account is most consistent with the pattern as described?",
-                    "answer_choices": [
-                              "Familiarity with institutional codes and expectations converts into advantage independently of income",
-                              "Differential capacity to purchase tutoring, preparation and private schooling",
-                              "Differing risk aversion in educational decision-making under otherwise equal information",
-                              "Accumulated differences in skill and productive capacity reflected in later attainment",
-                              "Expansion of higher education devaluing the credentials available to lower-status families"
-                    ],
-                    "idea_references": [
-                              "Bourdieu & Passeron, Reproduction in Education, Society and Culture (1977)",
-                              "Boudon, Education, Opportunity, and Social Inequality (1974)",
-                              "Lareau, Unequal Childhoods (2003)"
-                    ]
-          },
-          {
-                    "id": "idea-0002-4a1b-8c2d-000000000002",
-                    "display_id": "mjv-bk7c-6qsf",
-                    "domain": "Sociology",
-                    "subdomain": "Sociology of Family",
-                    "idea_title": "A household arrangement that cuts against the trend",
-                    "task_concept": "Somewhere in the record is a household that should not exist — a family form running against everything the standard account of its period predicts. Put that arrangement in front of the reader along with the conditions that produced it, and ask what best explains it. Done well, the general trend is a trap rather than a tool: reciting it produces the wrong answer, while reading the stated conditions produces the right one. Regional variation, migration, labor demand, legal change, and religious practice are all fertile ground here. Anchor it in a documented case; the exception has to be real, not invented for effect.",
-                    "suggested_angles": "The general trend should feel like the obvious answer and be wrong\nThe explanatory condition is stated plainly, not hinted at\nWorks for any period where you can defend the demographic record\nConsider asking what would have to change for the usual pattern to hold",
-                    "created_at": "2025-08-13T16:46:40Z",
-                    "example_question": "Census returns from a nineteenth-century textile district record a markedly higher proportion of extended, multi-generational households than in neighbouring agricultural districts, during a period usually associated with a shift toward nuclear household formation. Wages in the textile district were paid to individual workers, including women and adolescents, and mills ran on shift patterns. Which explanation best fits the evidence as presented?",
-                    "answer_choices": [
-                              "Co-residence with kin was an adaptive response to shift work and childcare needs under individual wage labour",
-                              "Industrialization had not yet reached far enough into the district to reshape household formation",
-                              "Pre-industrial kinship norms persisted independently of the surrounding economic change",
-                              "Landholding arrangements required co-resident heirs to maintain a claim",
-                              "In-migration produced temporary co-residence that census categories recorded as extended kin"
-                    ],
-                    "idea_references": [
-                              "Anderson, Family Structure in Nineteenth Century Lancashire (1971)",
-                              "Laslett & Wall, Household and Family in Past Time (1972)",
-                              "Hareven, Family Time and Industrial Time (1982)"
-                    ]
-          },
-          {
-                    "id": "idea-0003-4a1b-8c2d-000000000003",
-                    "display_id": "mjv-32ke-w9tk",
-                    "domain": "History",
-                    "subdomain": "American History",
-                    "idea_title": "Which cause did the work",
-                    "task_concept": "Historians rarely disagree about what happened. They disagree about what did the work. Pick an outcome with several genuine candidate causes standing behind it and ask which was most directly responsible — forcing the reader to weigh them against each other rather than list them. The strongest versions make every option defensible in isolation, so the answer turns on relative weight, timing, or proximity to the outcome. Counterfactual framing sharpens this: what survives if one factor is removed? Avoid anything a date or a name alone would settle.",
-                    "suggested_angles": "Every option should be a cause someone has seriously argued for\nTiming and proximity are useful discriminators; popularity is not\nCounterfactual phrasing works well — what if this factor had been absent\nIf a chronology table would answer it, it is the wrong question",
-                    "created_at": "2025-08-13T17:46:40Z",
-                    "example_question": "Reconstruction in the former Confederate states had effectively collapsed by 1877. Several developments plausibly contributed: the political settlement following the disputed 1876 election, the economic depression beginning in 1873, a series of Supreme Court decisions narrowing federal enforcement powers, and sustained paramilitary violence against Black voters and officeholders. Which was most directly responsible for the collapse of Reconstruction governments themselves?",
-                    "answer_choices": [
-                              "Sustained paramilitary violence that suppressed Black political participation at the local level",
-                              "The withdrawal of federal troops following the settlement of the 1876 election",
-                              "Supreme Court decisions that narrowed the reach of federal enforcement legislation",
-                              "The depression of 1873 redirecting northern political attention toward economic questions",
-                              "Constitutional limits on federal authority over the internal affairs of the states"
-                    ],
-                    "idea_references": [
-                              "Foner, Reconstruction: America's Unfinished Revolution (1988)",
-                              "Du Bois, Black Reconstruction in America (1935)",
-                              "Richardson, The Death of Reconstruction (2001)"
-                    ]
-          },
-          {
-                    "id": "idea-0004-4a1b-8c2d-000000000004",
-                    "display_id": "mjv-wpr8-qy9w",
-                    "domain": "Anthropology",
-                    "subdomain": "Archaeology",
-                    "idea_title": "What the assemblage can and cannot support",
-                    "task_concept": "An assemblage will happily support a story it cannot actually prove. That distance between what was found and what may be concluded is the question. Describe one — materials, context, what was found with what, and in what condition — then ask which inference the evidence licenses. The trap writes itself: the interpretation everyone reaches for first, which the described evidence underdetermines. Taphonomy, depositional context, dating method, and sampling all give you honest grounds for ruling readings in or out. Ask which conclusion is not supported, and the question stops rewarding familiarity with the site.",
-                    "suggested_angles": "Negative framing suits this — which inference does the evidence NOT support\nEvery find should be plausible for the region, period, and depositional setting\nLet context and association do the discriminating work, not the object list\nThe popular reading should be tempting and just out of reach",
-                    "created_at": "2025-08-13T18:46:40Z",
-                    "example_question": "A rock shelter yields a single stratum containing a dense scatter of retouched flakes and debitage, charred plant remains, fragmentary faunal material with no articulated elements, and two hearth features. Sediment analysis indicates episodic water action through the deposit. Which inference does this evidence NOT support?",
-                    "answer_choices": [
-                              "That the shelter was occupied on a year-round basis",
-                              "That fire was used within the shelter",
-                              "That plant material was burned in proximity to the hearth features",
-                              "That material has moved from its original position since deposition",
-                              "That stone tools were maintained or resharpened on site"
-                    ],
-                    "idea_references": [
-                              "Schiffer, Formation Processes of the Archaeological Record (1987)",
-                              "Binford, Nunamiut Ethnoarchaeology (1978)",
-                              "Lyman, Vertebrate Taphonomy (1994)"
-                    ]
-          },
-          {
-                    "id": "idea-0005-4a1b-8c2d-000000000005",
-                    "display_id": "mjv-3qk4-egqq",
-                    "domain": "Iberian and Latin American Cultures",
-                    "subdomain": "Indigenous Studies",
-                    "idea_title": "Whose framework is doing the reading",
-                    "task_concept": "The same object can be read two ways depending on who is holding the lens, and the reading often says more about the framework than the object. Present a text, practice, or material object alongside the details a careful reader would notice, and ask which interpretation those details actually support. The question works when both frameworks are live in the field and each would claim the material — so the answer rests on specifics in the description, not on which approach the reader finds more congenial. Questions of authorship, audience, transmission, and who was present at the moment of recording all give you traction.",
-                    "suggested_angles": "Both frameworks should be defensible, and one should fit the stated details better\nNo school or theorist named in the stem — let the reasoning identify it\nThe details, not the reader's sympathies, settle it\nConsider what each framework would have to ignore to hold its reading",
-                    "created_at": "2025-08-13T19:46:40Z",
-                    "example_question": "A pictorial manuscript produced in central Mexico several decades after the conquest combines Nahua glyphic conventions with Spanish alphabetic glosses, records boundaries and genealogical succession, and survives among the papers of a colonial land dispute. Which reading do these details most directly support?",
-                    "answer_choices": [
-                              "An instrument produced for litigation, mobilising indigenous pictorial convention within a Spanish legal forum",
-                              "An unmediated record of pre-contact practice preserved intact through the colonial period",
-                              "A devotional object whose primary function was aesthetic and religious rather than documentary",
-                              "A missionary teaching aid produced to instruct Nahua communities in Christian doctrine",
-                              "A later forgery assembled to support a claim that lacked documentary basis"
-                    ],
-                    "idea_references": [
-                              "Lockhart, The Nahuas After the Conquest (1992)",
-                              "Boone, Stories in Red and Black (2000)",
-                              "Restall, Seven Myths of the Spanish Conquest (2003)"
-                    ]
-          },
-          {
-                    "id": "idea-0006-4a1b-8c2d-000000000006",
-                    "display_id": "mjv-19qk-90kj",
-                    "domain": "Communication",
-                    "subdomain": "Journalism",
-                    "idea_title": "The norm that quietly conflicts with another",
-                    "task_concept": "Most reporting dilemmas are not a norm against a temptation. They are a norm against another norm, both legitimate, pulling in opposite directions. Build a scenario where two professional standards genuinely conflict and ask what the standards actually require here — not what feels defensible, and not what a newsroom would probably do under deadline. Verification against timeliness, source protection against accountability, privacy against public interest, and minimizing harm against completeness are all real fault lines. Ground it in codified, current guidance so the answer is arguable from the standards themselves rather than from instinct.",
-                    "suggested_angles": "Both norms should be codified and current, not folk wisdom about ethics\nThe strongest distractors are the norms that almost apply\nSpecify the details that determine which standard governs\nAvoid scenarios resolved by a newsroom's internal policy rather than the profession's",
-                    "created_at": "2025-08-13T20:46:40Z",
-                    "example_question": "A reporter obtains internal documents indicating that a mid-level public official misused agency funds. The documents are independently verified. The source who supplied them will speak only on condition of anonymity, and the official has not responded to repeated requests for comment ahead of an imminent election. Which course of action is most consistent with prevailing professional standards?",
-                    "answer_choices": [
-                              "Publish, attributing the documents' provenance as fully as possible without identifying the source, and record the official's non-response",
-                              "Withhold publication until the official responds, so the account cannot be called one-sided",
-                              "Publish only after the election, to avoid the appearance of influencing the outcome",
-                              "Publish and identify the source, since readers cannot assess the claim without knowing its origin",
-                              "Refer the documents to the relevant oversight body and report only once it acts"
-                    ],
-                    "idea_references": [
-                              "Society of Professional Journalists, Code of Ethics (2014 revision)",
-                              "Kovach & Rosenstiel, The Elements of Journalism (3rd ed., 2014)",
-                              "Reuters Handbook of Journalism"
-                    ]
-          },
-          {
-                    "id": "idea-0007-4a1b-8c2d-000000000007",
-                    "display_id": "mjv-6bz4-dw06",
-                    "domain": "French, Italian, and German",
-                    "subdomain": "Francophone Studies",
-                    "idea_title": "A form that changes meaning in translation",
-                    "task_concept": "Some texts survive translation intact and others are hollowed out by it, and the difference is rarely about vocabulary. Choose a work whose effect depends on something structural — register, address, verse form, grammatical gender, dialect, the formality a pronoun carries — and ask what is altered when that feature crosses into another language or context. The reader should have to identify which formal feature is load-bearing before they can say what is lost. Quoted source text can stay in the original; everything you write around it goes in English.",
-                    "suggested_angles": "The answer turns on a formal feature, not on plot or theme\nPick a text where the feature is doing real work, not decorative work\nDistractors can name genuine translation problems that are not the issue here\nReception and audience expectations are fair game as complications",
-                    "created_at": "2025-08-13T21:46:40Z",
-                    "example_question": "A Francophone North African novel alternates between a formal literary French narration and dialogue carrying Arabic syntactic patterning, with certain terms left untranslated. An English translation standardises register throughout and glosses the untranslated terms in a glossary. What is most substantially altered?",
-                    "answer_choices": [
-                              "The text's staging of a linguistic hierarchy between coloniser and colonised",
-                              "The chronology of events as the reader encounters them",
-                              "The reliability of the narrator's account of events",
-                              "The novel's classification within a recognised genre",
-                              "The identification of the setting and its historical period"
-                    ],
-                    "idea_references": [
-                              "Venuti, The Translator's Invisibility (1995)",
-                              "Casanova, The World Republic of Letters (2004)",
-                              "Khatibi, Amour bilingue (1983)"
-                    ]
-          }
-],
-        mojave_claims: [],
-        mojave_claim_events: [],
-        gallery_visits: []
-      };
+      const SUPABASE_URL = "https://ehwukpsxuujscxqmoooo.supabase.co";
+      const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImVod3VrcHN4dXVqc2N4cW1vb29vIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY3MzQxNTMsImV4cCI6MjEwMjMxMDE1M30.P8PwjCh2noA2VIbCB_QIE50ZTaU_ZKmO6WjeTOc0Y1I";
 
-      const DEMO_USER = { id: "local-demo-user", email: "tyler.davis@snorkel.ai" };
-
-      let localSession = null;
-      let localClaimSeq = 1;
-      let localEventSeq = 1;
-
-      function localMatches(row, filters) {
-        return filters.every(f => {
-          if (f.op === "eq") return row[f.col] === f.val;
-          if (f.op === "in") return f.val.includes(row[f.col]);
-          return true;
-        });
-      }
-
-      function localExpireClaims() {
-        const now = Date.now();
-        let count = 0;
-
-        LOCAL_DB.mojave_claims.forEach(claim => {
-          if (claim.status === "claimed" && claim.expires_at && new Date(claim.expires_at).getTime() < now) {
-            claim.status = "expired";
-            claim.expires_at = null;
-            count += 1;
-          }
-        });
-
-        return count;
-      }
-
-      class LocalQuery {
-        constructor(table) {
-          this.table = table;
-          this.op = "select";
-          this.payload = null;
-          this.filters = [];
-          this.orderBy = null;
-        }
-
-        select(_cols) { this.op = "select"; return this; }
-        insert(payload) { this.op = "insert"; this.payload = payload; return this; }
-        update(payload) { this.op = "update"; this.payload = payload; return this; }
-        upsert(payload, opts) { this.op = "upsert"; this.payload = payload; this.onConflict = opts?.onConflict; return this; }
-        order(col, opts) { this.orderBy = { col, ascending: opts?.ascending !== false }; return this; }
-        eq(col, val) { this.filters.push({ op: "eq", col, val }); return this; }
-        in(col, val) { this.filters.push({ op: "in", col, val }); return this; }
-
-        run() {
-          const rows = LOCAL_DB[this.table];
-
-          if (!rows) return { data: null, error: { message: "Unknown table " + this.table } };
-
-          if (this.op === "select") {
-            let out = rows.filter(r => localMatches(r, this.filters)).map(r => ({ ...r }));
-
-            if (this.orderBy) {
-              const { col, ascending } = this.orderBy;
-              out.sort((a, b) => {
-                const av = a[col], bv = b[col];
-                const an = parseInt(av, 10), bn = parseInt(bv, 10);
-                let cmp;
-                if (Number.isFinite(an) && Number.isFinite(bn)) cmp = an - bn;
-                else cmp = String(av || "").localeCompare(String(bv || ""));
-                return ascending ? cmp : -cmp;
-              });
-            }
-
-            return { data: out, error: null };
-          }
-
-          if (this.op === "insert") {
-            const nextId = this.table === "mojave_claim_events"
-              ? localEventSeq++
-              : "claim-" + (localClaimSeq++);
-            const row = { id: nextId, ...this.payload };
-            rows.push(row);
-            return { data: [row], error: null };
-          }
-
-          if (this.op === "update") {
-            // Stand-in for the unique index on snorkel_submission_id.
-            if (this.table === "mojave_claims" && this.payload.snorkel_submission_id) {
-              const id = String(this.payload.snorkel_submission_id).toLowerCase();
-              const targets = rows.filter(r => localMatches(r, this.filters)).map(r => r.id);
-              const clash = rows.some(r =>
-                String(r.snorkel_submission_id || "").toLowerCase() === id && !targets.includes(r.id)
-              );
-
-              if (clash) {
-                return { data: null, error: { code: "23505", message: "duplicate key value violates unique constraint" } };
-              }
-            }
-
-            const hit = rows.filter(r => localMatches(r, this.filters));
-            hit.forEach(r => Object.assign(r, this.payload));
-            return { data: hit, error: null };
-          }
-
-          if (this.op === "upsert") {
-            const key = this.onConflict || "id";
-            const existing = rows.find(r => r[key] === this.payload[key]);
-            if (existing) Object.assign(existing, this.payload);
-            else rows.push({ id: "task-" + (rows.length + 1), ...this.payload });
-            return { data: [this.payload], error: null };
-          }
-
-          return { data: null, error: { message: "Unsupported op" } };
-        }
-
-        then(resolve, reject) {
-          try { return Promise.resolve(this.run()).then(resolve, reject); }
-          catch (err) { return Promise.reject(err).catch(reject); }
-        }
-      }
-
-      // Stands in for the Supabase client: same call shapes, but all state lives
-      // in this page for the session. Nothing is persisted or sent anywhere.
-      const supabaseClient = {
-        from(table) { return new LocalQuery(table); },
-        rpc(name) {
-          if (name === "expire_old_mojave_claims") {
-            localExpireClaims();
-            return Promise.resolve({ data: null, error: null });
-          }
-          if (name === "clear_expired_mojave_claims") {
-            return Promise.resolve({ data: localExpireClaims(), error: null });
-          }
-          return Promise.resolve({ data: null, error: null });
-        },
-        auth: {
-          getSession() { return Promise.resolve({ data: { session: localSession }, error: null }); },
-          signInWithOAuth() {
-            localSession = { user: DEMO_USER };
-            currentUser = DEMO_USER;
-            return recordVisit()
-              .then(() => loadTasks())
-              .then(() => ({ error: null }));
-          },
-          signOut() {
-            localSession = null;
-            return Promise.resolve({ error: null });
-          }
-        }
-      };
+      const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
       // One row per page load, for signed-in users only. Write-only by design:
       // the gallery never reads these back — visits are reviewed in Supabase.
@@ -1716,6 +1407,7 @@
       async function signOut() {
         await supabaseClient.auth.signOut();
         currentUser = null;
+        ADMIN_EMAILS = [];
         await loadTasks();
       }
 
@@ -1810,7 +1502,7 @@
 
         const { data: claimsData, error: claimsError } = await supabaseClient
           .from("mojave_claims")
-          .select("id, task_id, user_id, user_email, status, snorkel_submission_id, selected_at, submitted_for_review_at, completed_at, reviewed_by, reviewed_at, expires_at, admin_email, notes")
+          .select("id, task_id, user_id, user_email, status, claim_intent, snorkel_submission_id, selected_at, submitted_for_review_at, completed_at, reviewed_by, reviewed_at, expires_at, admin_email, notes")
           .order("selected_at", { ascending: false });
 
         if (claimsError) {
@@ -4282,12 +3974,25 @@
         applyTheme(prefersDark ? "dark" : "light");
       }
 
-      async function init() {
-        initTheme();
+      async function refreshEverything() {
         await loadSession();
+        await loadAdmins();
         await recordVisit();
         await loadTasks();
+      }
+
+      async function init() {
+        initTheme();
+        await refreshEverything();
         renderFloatingNotice();
+
+        // Fires after the OAuth redirect lands back here, and on sign-out.
+        supabaseClient.auth.onAuthStateChange(async (event) => {
+          if (event === "SIGNED_IN" || event === "SIGNED_OUT" || event === "TOKEN_REFRESHED") {
+            visitLogged = event === "SIGNED_OUT" ? false : visitLogged;
+            await refreshEverything();
+          }
+        });
       }
 
       init();
